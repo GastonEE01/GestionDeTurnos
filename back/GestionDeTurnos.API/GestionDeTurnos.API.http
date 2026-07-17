@@ -1,0 +1,6 @@
+@GestionDeTurnos.API_HostAddress = http://localhost:5076
+
+GET {{GestionDeTurnos.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,13 @@
+# Archivos temporales de Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Carpetas de compilación de .NET
+bin/
+obj/
+
+# Archivos de configuración local (¡muy importante no subirlos por seguridad!)
+appsettings.Development.json
