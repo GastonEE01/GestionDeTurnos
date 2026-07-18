@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,21 +35,36 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
+{
+    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173",                  // Tu React en tu PC
+                "https://app-peliculas-three.vercel.app"   // Tu React publicado en Vercel
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
         c.RoutePrefix = string.Empty;
     });
-}
+
 
 
 app.UseHttpsRedirection();

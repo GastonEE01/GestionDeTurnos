@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GestionDeTurnos.API\GestionDeTurnos.API\GestionDeTurnos.API.csproj" />
+    <ProjectReference Include="..\GestionDeTurnos.API\GestionDeTurnos.API.csproj" />
     <ProjectReference Include="..\GestionDeTurnos.Application\GestionDeTurnos.Application.csproj" />
     <ProjectReference Include="..\GestionDeTurnos.Domain\GestionDeTurnos.Domain.csproj" />
     <ProjectReference Include="..\GestionDeTurnos.Infrastructure\GestionDeTurnos.Infrastructure.csproj" />
