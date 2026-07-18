@@ -1,5 +1,5 @@
 import './App.css'
-import {  Route, Routes } from 'react-router-dom'
+import {  Route, Routes,Navigate } from 'react-router-dom'
 
 // Componentes
 import { Header } from './components/Header/Header'
@@ -12,13 +12,20 @@ function App() {
     <>
      <div>
       <Routes>
-        <Route path='/Home' element={ 
+        <Route path='/Home' element={     
         <>
         <Header/>
         <Home/>
-        
-        </>}></Route>
-      </Routes>
+        </>}>
+        </Route>
+
+<Route path='/' element={     
+        <>
+        <Header/>
+        <Home/>
+        </>}>
+        </Route>
+       </Routes>
      </div>
     </>
   )
