@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from 'react'
+import  {   useState } from 'react'
 
 // Componentes
 import { LocalesTable } from '../Locales/LocalesTable'
@@ -44,9 +44,9 @@ export const Home = () => {
 
     console.log("Texto: " ,debouseText)
 
-   const handleEditar = (id: number) => {
+   /*const handleEditar = (id: number) => {
     console.log("Editando local: ", id);
-   }
+   }*/
 
     return (
     <div>
@@ -55,7 +55,7 @@ export const Home = () => {
       <SearchText value={searchText} onChange={(e) => setSearchText(e.target.value)} />
        <Filter value={filterCategoria} onChange={(e) => setFilterCategoria(e.target.value)} />    
       </div>
-      <LocalesTable data={localFilter} onEditar={handleEditar} />      
+      <LocalesTable data={localFilter}  />      
     </div>
   )
 }

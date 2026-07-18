@@ -1,7 +1,7 @@
 import React from 'react'
 import type {LocalesTableProps} from '../Locales/LocalesType.ts'
 
-export const LocalesTable: React.FC<LocalesTableProps> = ({data ,onEditar}) => {
+export const LocalesTable: React.FC<LocalesTableProps> = ({data }) => {
   return (
     <div>
       <table>
