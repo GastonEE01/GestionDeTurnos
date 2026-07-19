@@ -1,13 +1,14 @@
 
 
 export interface LocalesType{
-    Id: number,
-    Nombre: string,
-    Descripcion: string,
-    Categoria: string,
-    ImagenURL: string,
-    Direccion: string,
-    Telefono: string
+    id: number,
+    name: string,
+    description: string,
+    category: string,
+    imageURL: string,
+    title: string,
+    direction: string,
+    phone: string
 }
 
 // Representa las propiedades (props) que va a recibir tu componente Tabla

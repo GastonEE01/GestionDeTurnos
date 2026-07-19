@@ -1,5 +1,5 @@
-import  {   useState } from 'react'
-
+import  {   useEffect, useState } from 'react'
+import { getLocales } from '../../service/api.ts';
 // Componentes
 import { LocalesTable } from '../Locales/LocalesTable'
 import type { LocalesType } from '../Locales/LocalesType'
@@ -7,7 +7,8 @@ import { Filter } from '../UIX/Filter';
 import { SearchText } from '../UIX/SearchText.tsx';
 // Hook
 import { useDebouce } from '../../hook/useDebouce.ts';
-const LOCALES_DE_PRUEBA: LocalesType[] = [
+
+/*const LOCALES_DE_PRUEBA: LocalesType[] = [
   {
     Id: 1,
     Nombre: "Barbería Centro",
@@ -26,19 +27,32 @@ const LOCALES_DE_PRUEBA: LocalesType[] = [
     Direccion: "Calle Mitre 567",
     Telefono: "1199887766"
   }
-];
+];*/
 
 export const Home = () => {
 
     // Estados
     const [searchText,setSearchText] = useState('')
     const [filterCategoria,setFilterCategoria] = useState('')
+    const [locales, setLocales] = useState<LocalesType[]>([]);
+  
+    useEffect(() => {
+      const loadingLocales = async () => {
+        try{
+          const data = await getLocales();
+          setLocales(data);
+        } catch (error){
+          console.error("Error al traer locales: ", error);
+        }
+      };
+      loadingLocales()
+    },[]);
 
     const debouseText = useDebouce(searchText,500)
-    const localFilter = LOCALES_DE_PRUEBA.filter((local) => {
-       const coincideNombre =  local.Nombre.toLocaleLowerCase().includes(debouseText.toLocaleLowerCase());
-       const coincideCategoria = filterCategoria === "" || local.Categoria === filterCategoria;
-       return coincideCategoria && coincideNombre;
+    const localFilter = locales.filter((locales) => {
+       const nameEquals =  locales.name.toLocaleLowerCase().includes(debouseText.toLocaleLowerCase());
+       const categoryEquals = filterCategoria === "" || locales.category === filterCategoria;
+       return categoryEquals && nameEquals;
     });
 
 

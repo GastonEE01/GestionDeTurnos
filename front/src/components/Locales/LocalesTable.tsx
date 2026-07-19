@@ -18,14 +18,14 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data }) => {
         </thead>
         <tbody>
           {data.map((local) => (
-            <tr key={local.Id}>
-              <td>{local.Id}</td>
-              <td>{local.Nombre}</td>
-              <td>{local.Descripcion}</td>
-              <td>{local.Categoria}</td>
-              <td>{local.Direccion}</td>
-              <td>{local.Telefono}</td>
-              <td>{local.ImagenURL}</td>
+            <tr key={local.id}>
+              <td>{local.id}</td>
+              <td>{local.name}</td>
+              <td>{local.description}</td>
+              <td>{local.category}</td>
+              <td>{local.direction}</td>
+              <td>{local.phone}</td>
+              <td>{local.imageURL}</td>
               <td></td>
               <td></td>
             </tr>
