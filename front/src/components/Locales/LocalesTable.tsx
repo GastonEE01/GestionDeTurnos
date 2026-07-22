@@ -14,6 +14,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data }) => {
             <th>ImagenURL</th>
             <th>Direccion</th>
             <th>Telefono</th>
+            <th>Servicios</th>
           </tr>
         </thead>
         <tbody>
@@ -26,7 +27,8 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data }) => {
               <td>{local.direction}</td>
               <td>{local.phone}</td>
               <td>{local.imageURL}</td>
-              <td></td>
+              <td>{local.servicios.length > 0 
+                ? local.servicios.map(s => s.name).join(", ") : "Sin servicios"}</td>
               <td></td>
             </tr>
             

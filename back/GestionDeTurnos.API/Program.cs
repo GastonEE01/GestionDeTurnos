@@ -1,9 +1,11 @@
+Ôªøusing AutoMapper;
 using Azure.Identity;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Application.UseCase.Locales;
 using GestionDeTurnos.Infrastructure.Data;
 using GestionDeTurnos.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -18,6 +20,9 @@ builder.Services.AddScoped<ILocalRepository, LocalRepository>();
 // Casos de uso
 builder.Services.AddScoped<GetLocalUseCase>();
 
+// // üîå Le ense√±amos a .NET c√≥mo construir el IMapper usando tu clase de mapeo
+builder.Services.AddAutoMapper(cfg => { }, typeof(GestionDeTurnos.Application.Mapper.MapperLocal));
+
 // Configuracion de la Base de Datos (PostgreSQL con Neon)
 var connectionString = Environment.GetEnvironmentVariable("NeonTech__connectionString");
 
@@ -27,7 +32,7 @@ if (string.IsNullOrEmpty(connectionString))
 }
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("No se encontrÛ la cadena de conexiÛn 'NeonTech' en ning˙n entorno.");
+    throw new InvalidOperationException("No se encontr√≥ la cadena de conexi√≥n 'NeonTech' en ning√∫n entorno.");
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -44,7 +49,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Ingres·: Bearer {tu token}"
+        Description = "Ingres√°: Bearer {tu token}"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -62,7 +67,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-// TelemetrÌa de Application Insights
+// Telemetr√≠a de Application Insights
 builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -83,13 +88,13 @@ builder.Services.AddCors(options =>
 });
 
 
-// CONSTRUCCI”N DE LA APLICACI”N Y MIDDLEWARES
+// CONSTRUCCI√ìN DE LA APLICACI√ìN Y MIDDLEWARES
 var app = builder.Build();
 
 // Habilitar CORS como primer paso en el pipeline HTTP
 app.UseCors("AllowFrontend");
 
-// ConfiguraciÛn del entorno de Swagger
+// Configuraci√≥n del entorno de Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
     {
@@ -103,7 +108,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// MIGRACIONES AUTOM¡TICAS(Para Neon en la nube
+// MIGRACIONES AUTOM√ÅTICAS(Para Neon en la nube
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();

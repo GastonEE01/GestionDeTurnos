@@ -1,4 +1,6 @@
-﻿using GestionDeTurnos.Application.Interface;
+﻿using AutoMapper;
+using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,15 +13,20 @@ namespace GestionDeTurnos.Application.UseCase.Locales
     public class GetLocalUseCase
     {
         private readonly ILocalRepository _localRepository;
+        private readonly IMapper _mapper;
 
-            public GetLocalUseCase(ILocalRepository localRepository)
+            public GetLocalUseCase(ILocalRepository localRepository, IMapper mapper)
         {
             _localRepository = localRepository;
-        }
-        public List<Local> GetLocal()
+            _mapper = mapper;
+         }
+        public List<LocalDto> GetLocal()
         {
             List<Local> locales = _localRepository.GetAll();
-            return locales;
+
+            // Mapear la lista completa
+            List<LocalDto> localDto = _mapper.Map<List<LocalDto>>(locales);
+            return localDto;
         }
     }
 }

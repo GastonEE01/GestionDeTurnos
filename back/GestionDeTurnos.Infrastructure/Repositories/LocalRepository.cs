@@ -1,6 +1,7 @@
 ﻿using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using GestionDeTurnos.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,10 @@ namespace GestionDeTurnos.Infrastructure.Repositories
 
         public List<Local> GetAll()
         {
-            return _context.Locals.ToList();
-          /* List<Local> list = new List<Local>();
-            _context.Add(list);
-            _context.SaveChanges();
-            return list;*/
+            return _context.Locales
+                   .Include(l => l.Servicios) 
+                   .ToList();
+
         }
     }
 }

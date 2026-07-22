@@ -3,6 +3,7 @@ import { getLocales } from '../../service/api.ts';
 // Componentes
 import { LocalesTable } from '../Locales/LocalesTable'
 import type { LocalesType } from '../Locales/LocalesType'
+import type { ServicioType } from '../Servicio/ServicioType.ts'
 import { Filter } from '../UIX/Filter';
 import { SearchText } from '../UIX/SearchText.tsx';
 // Hook
@@ -35,7 +36,6 @@ export const Home = () => {
     const [searchText,setSearchText] = useState('')
     const [filterCategoria,setFilterCategoria] = useState('')
     const [locales, setLocales] = useState<LocalesType[]>([]);
-  
     useEffect(() => {
       const loadingLocales = async () => {
         try{

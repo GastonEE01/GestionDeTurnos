@@ -14,6 +14,11 @@ namespace GestionDeTurnos.Infrastructure.Data
         { 
         }
 
-        public DbSet<Local> Locals { get; set; }
+        public DbSet<Local> Locales { get; set; }
+        public DbSet<Servicio> Servicios { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Turno> Turnos { get; set; }
+
+
     }
 }
