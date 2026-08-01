@@ -1,4 +1,5 @@
 ﻿using GestionDeTurnos.Application.UseCase.Locales;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

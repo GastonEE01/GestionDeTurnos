@@ -1,6 +1,6 @@
 import type { ServicioType } from '../Servicio/ServicioType';
 export interface LocalesType{
-    id: number,
+    id: string,
     name: string,
     description: string,
     category: string,
@@ -15,6 +15,7 @@ export interface LocalesType{
 // Representa las propiedades (props) que va a recibir tu componente Tabla
 export interface LocalesTableProps {
   data: LocalesType[];
+  usuarioId: string;
   onEditar?: (id: number) => void;
   onEliminar?: (id: number) => void;
   onAgregarServicio?: (localId: number) => void;

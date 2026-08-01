@@ -2,11 +2,18 @@
 using Azure.Identity;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Application.UseCase.Locales;
+using GestionDeTurnos.Application.UseCase.Registros;
+using GestionDeTurnos.Application.UseCase.Turnos;
+using GestionDeTurnos.Application.UseCase.Usuarios;
 using GestionDeTurnos.Infrastructure.Data;
 using GestionDeTurnos.Infrastructure.Repositories;
+using GestionDeTurnos.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,9 +23,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Repositorios
 builder.Services.AddScoped<ILocalRepository, LocalRepository>();
+builder.Services.AddScoped<TurnoRespository, TurnoRepository>();
+builder.Services.AddScoped<IUserReposirtory, UsuarioRepository>();
+
+// Servicios
+builder.Services.AddScoped<JWTService>();
 
 // Casos de uso
 builder.Services.AddScoped<GetLocalUseCase>();
+builder.Services.AddScoped<AddTurnoUseCase>();
+builder.Services.AddScoped<AddUserUseCase>();
+builder.Services.AddScoped<GetUserUseCase>();
+
 
 // // 🔌 Le enseñamos a .NET cómo construir el IMapper usando tu clase de mapeo
 builder.Services.AddAutoMapper(cfg => { }, typeof(GestionDeTurnos.Application.Mapper.MapperLocal));
@@ -67,6 +83,23 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+// Configuracion del JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "TuEmisorGenérico",      // Después lo pasamos al appsettings.json
+            ValidAudience = "TuAudienciaGenérica",  // Después lo pasamos al appsettings.json
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("UnaClaveSuperSecretaYMuyLargaDeMasDe32Caracteres!"))
+        };
+    });
+
 // Telemetría de Application Insights
 builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
 {
@@ -103,6 +136,8 @@ app.UseSwaggerUI(c =>
     });
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); 
 
 app.UseAuthorization();
 

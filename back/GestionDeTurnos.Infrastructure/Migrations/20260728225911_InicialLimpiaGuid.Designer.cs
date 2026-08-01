@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GestionDeTurnos.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260719190243_AgregoTablaUsuario-Servicio")]
-    partial class AgregoTablaUsuarioServicio
+    [Migration("20260728225911_InicialLimpiaGuid")]
+    partial class InicialLimpiaGuid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace GestionDeTurnos.Infrastructure.Migrations
 
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Local", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -68,11 +66,9 @@ namespace GestionDeTurnos.Infrastructure.Migrations
 
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Servicio", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -81,8 +77,8 @@ namespace GestionDeTurnos.Infrastructure.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("integer");
 
-                    b.Property<int>("LocalId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("LocalId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -98,20 +94,47 @@ namespace GestionDeTurnos.Infrastructure.Migrations
                     b.ToTable("Servicios");
                 });
 
+            modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Turno", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LocalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ServicioId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
+
+                    b.HasIndex("ServicioId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Turnos");
+                });
+
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Usuario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("LocalId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("LocalId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -141,6 +164,33 @@ namespace GestionDeTurnos.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Local");
+                });
+
+            modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Turno", b =>
+                {
+                    b.HasOne("GestionDeTurnos.Domain.Entities.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionDeTurnos.Domain.Entities.Servicio", "Servicio")
+                        .WithMany()
+                        .HasForeignKey("ServicioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionDeTurnos.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Local");
+
+                    b.Navigation("Servicio");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Usuario", b =>
