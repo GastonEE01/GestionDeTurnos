@@ -3,6 +3,7 @@ using System;
 using GestionDeTurnos.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GestionDeTurnos.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260802221842_AgregoTablaHorario")]
+    partial class AgregoTablaHorario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,10 +38,10 @@ namespace GestionDeTurnos.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<TimeSpan>("HoraApertura")
-                        .HasColumnType("time");
+                        .HasColumnType("interval");
 
                     b.Property<TimeSpan>("HoraCierre")
-                        .HasColumnType("time");
+                        .HasColumnType("interval");
 
                     b.Property<Guid>("LocalId")
                         .HasColumnType("uuid");
@@ -183,7 +186,7 @@ namespace GestionDeTurnos.Infrastructure.Migrations
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.HorarioAtencion", b =>
                 {
                     b.HasOne("GestionDeTurnos.Domain.Entities.Local", "Local")
-                        .WithMany("HorariosAtencion")
+                        .WithMany()
                         .HasForeignKey("LocalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -240,8 +243,6 @@ namespace GestionDeTurnos.Infrastructure.Migrations
 
             modelBuilder.Entity("GestionDeTurnos.Domain.Entities.Local", b =>
                 {
-                    b.Navigation("HorariosAtencion");
-
                     b.Navigation("Servicios");
                 });
 #pragma warning restore 612, 618

@@ -11,9 +11,9 @@ namespace GestionDeTurnos.Application.UseCase.Usuarios
 {
     public class GetUserUseCase
     {
-        private readonly IUserReposirtory _userReposirtory;
+        private readonly IUserRepository _userReposirtory;
 
-        public GetUserUseCase(IUserReposirtory userReposirtory)
+        public GetUserUseCase(IUserRepository userReposirtory)
         {
             _userReposirtory = userReposirtory;
         }

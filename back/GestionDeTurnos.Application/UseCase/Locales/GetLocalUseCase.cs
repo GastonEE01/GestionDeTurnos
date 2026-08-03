@@ -20,12 +20,12 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             _localRepository = localRepository;
             _mapper = mapper;
          }
-        public List<LocalDto> GetLocal()
+        public List<LocalResponseDto> GetLocal()
         {
             List<Local> locales = _localRepository.GetAll();
 
             // Mapear la lista completa
-            List<LocalDto> localDto = _mapper.Map<List<LocalDto>>(locales);
+            List<LocalResponseDto> localDto = _mapper.Map<List<LocalResponseDto>>(locales);
             return localDto;
         }
     }

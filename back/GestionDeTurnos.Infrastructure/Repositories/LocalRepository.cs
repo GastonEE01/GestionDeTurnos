@@ -19,10 +19,17 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
+        public void Add(Local local)
+        {
+            _context.Locales.Add(local);
+            _context.SaveChanges();
+        }
+
         public List<Local> GetAll()
         {
             return _context.Locales
                    .Include(l => l.Servicios) 
+                   .Include(l => l.HorariosAtencion)
                    .ToList();
 
         }

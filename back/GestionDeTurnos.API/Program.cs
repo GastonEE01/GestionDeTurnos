@@ -24,7 +24,8 @@ builder.Services.AddControllers();
 // Repositorios
 builder.Services.AddScoped<ILocalRepository, LocalRepository>();
 builder.Services.AddScoped<TurnoRespository, TurnoRepository>();
-builder.Services.AddScoped<IUserReposirtory, UsuarioRepository>();
+builder.Services.AddScoped<IUserRepository, UsuarioRepository>();
+builder.Services.AddScoped<IHorarioAtencionRepository, HorarioAtencionRepository>();
 
 // Servicios
 builder.Services.AddScoped<JWTService>();
@@ -34,6 +35,7 @@ builder.Services.AddScoped<GetLocalUseCase>();
 builder.Services.AddScoped<AddTurnoUseCase>();
 builder.Services.AddScoped<AddUserUseCase>();
 builder.Services.AddScoped<GetUserUseCase>();
+builder.Services.AddScoped<AddLocalUseCase>();
 
 
 // // 🔌 Le enseñamos a .NET cómo construir el IMapper usando tu clase de mapeo

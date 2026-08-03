@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.Interface
 {
-    public interface IUserReposirtory
+    public interface IUserRepository
     {
         Usuario Add(Usuario user);
         Usuario GetUser(string email);

@@ -1,5 +1,4 @@
-﻿using GestionDeTurnos.Application.DTOs;
-using GestionDeTurnos.Domain.Entities;
+﻿using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.Interface
 {
-    public interface ILocalRepository
+    public interface IHorarioAtencionRepository
     {
-        void Add(Local local);
-        List<Local> GetAll();
+        void Add(HorarioAtencion horarios);
     }
 }

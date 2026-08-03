@@ -1,7 +1,6 @@
 ﻿using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using GestionDeTurnos.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +9,19 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Infrastructure.Repositories
 {
-    public class UsuarioRepository : IUserRepository
+    public class HorarioAtencionRepository : IHorarioAtencionRepository
     {
         private readonly AppDbContext _context;
 
-        public UsuarioRepository(AppDbContext context)
+        public HorarioAtencionRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public Usuario Add(Usuario user)
+        public void Add(HorarioAtencion horarios)
         {
-            _context.Add(user);
+            _context.HorariosAtencion.Add(horarios);
             _context.SaveChanges();
-            return user;
-        }
-
-        public Usuario GetUser(string email)
-        { 
-            return _context.Usuarios.FirstOrDefault(l => l.Email == email);
-                
         }
     }
 }

@@ -17,5 +17,6 @@ namespace GestionDeTurnos.Domain.Entities
         public string Direction { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public List<Servicio> Servicios { get; set; } = new List<Servicio>();
+        public List<HorarioAtencion> HorariosAtencion { get; set; } = new List<HorarioAtencion>();
     }
 }
