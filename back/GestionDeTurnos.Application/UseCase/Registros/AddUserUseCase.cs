@@ -19,7 +19,7 @@ namespace GestionDeTurnos.Application.UseCase.Registros
         {
             _userReposirtory = userRepository;
         }
-        public Usuario addUser(UserRequestDto dto)
+        public async Task<Usuario> addUser(UserRequestDto dto)
         {
             // validar datos
 
@@ -50,7 +50,7 @@ namespace GestionDeTurnos.Application.UseCase.Registros
             string passworHasherConfirm = passworHasher.HashPassword(user, dto.Password);
 
             user.PasswordHash = passworHasherConfirm;
-            _userReposirtory.Add(user);
+            await _userReposirtory.AddAsync(user);
 
 
             return user;

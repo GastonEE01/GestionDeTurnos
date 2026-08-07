@@ -14,6 +14,8 @@ namespace GestionDeTurnos.Application.DTOs
         public Guid ServicioId { get; set; } 
         public Guid LocalId { get; set; }
         public Guid UsuarioId { get; set; }
+        public bool EstaPedido { get; set; } = true; // Por defecto, cuando se crea un turno, está pedido
+
 
         // Guarda fecha y hora del turno
 

@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.Interface
 {
-    public interface TurnoRespository
+    public interface ITurnoRespository
     {
-        Turno addTurno(Turno dto);
+        Task<Turno> addTurnoAsync(Turno dto);
+        Task<bool> AppointmentExistsAsync(Guid localId, DateTime date);
     }
 }

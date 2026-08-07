@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Infrastructure.Repositories
 {
-    public class TurnoRepository : TurnoRespository
+    public class TurnoRepository : ITurnoRespository
     {
         private readonly AppDbContext _context;
 
@@ -20,10 +20,16 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
-        public Turno addTurno(Turno turno)
+        public async Task<bool> AppointmentExistsAsync(Guid localId, DateTime fecha)
+        {
+            return await _context.Turnos.AnyAsync(t => t.LocalId == localId && t.Date == fecha);
+        }
+
+        public async Task<Turno> addTurnoAsync(Turno turno)
         {
             try
             {
+
                 _context.Add(turno);
                 _context.SaveChanges();
                 return turno;
@@ -35,5 +41,10 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 throw;
             }
         }
+
+        /*public bool AppointmentExists(Guid localId, Guid servicioId, DateTime date)
+        {
+            throw new NotImplementedException();
+        }*/
     }
 }

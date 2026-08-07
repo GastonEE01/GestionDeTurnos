@@ -10,8 +10,9 @@ export const getLocales = async (): Promise<LocalesType[]>  => {
         headers: {
             'Content-type' : 'application/json',
         },
+    
     });
-
+console.log(rest);
     if(!rest.ok){
             const errorData = await rest.json().catch(() => ({}));
             throw new Error(errorData.message || 'Error al obtener los locales');

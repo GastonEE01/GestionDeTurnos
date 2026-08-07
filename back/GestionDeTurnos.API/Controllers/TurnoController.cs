@@ -16,7 +16,7 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTurno(TurnoRequestDto dto)
+        public async Task<IActionResult> AddTurno(TurnoRequestDto dto)
         {
             if (dto == null)
             {
@@ -25,7 +25,7 @@ namespace GestionDeTurnos.API.Controllers
 
             try
             {
-                Turno turno = _addTurnoUseCase.AddTurno(dto);
+                Turno turno = await _addTurnoUseCase.AddTurno(dto);
                 TurnoResponseDto response = new TurnoResponseDto
                 {
                     Id = turno.Id,
@@ -34,10 +34,17 @@ namespace GestionDeTurnos.API.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
+                // Muestra errores de validación de negocio (400 Bad Request)
                 return BadRequest(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                // 🚨 409 CONFLICT cuando el turno ya existe
+                return Conflict(new { message = ex.Message });
+            }
+
         }
     }
 }

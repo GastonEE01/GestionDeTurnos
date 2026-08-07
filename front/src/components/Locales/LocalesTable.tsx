@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type {LocalesTableProps, LocalesType} from '../Locales/LocalesType.ts'
 import {ModalTurno} from '../Turnos/ModalTurno.tsx'
+import { DayOfWeek } from './LocalesType.ts'
 export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => {
    const [selectedLocal, setSelectedLocal] = useState<LocalesType | null>(null);
   return (
@@ -16,6 +17,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => 
             <th>Direccion</th>
             <th>Telefono</th>
             <th>Servicios</th>
+            <th>Horarios de Atencion</th>
             <th>Acciones</th>
             </tr>
            
@@ -32,7 +34,12 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => 
               <td>{local.imageURL}</td>
               <td>{local.servicios.length > 0 
                 ? local.servicios.map(s => s.name).join(", ") : "Sin servicios"}</td>
-              <button onClick={() => setSelectedLocal(local)}>Pedir turno</button>
+              <td>{local.horariosAtencion.length > 0 
+                ? local.horariosAtencion.map(h => 
+        `${h.estaCerrado ? 'Cerrado' : 'Abierto'}: ${DayOfWeek[Number(h.diaSemana) as keyof typeof DayOfWeek]}: ${h.horaApertura.substring(0, 5)} - ${h.horaCierre.substring(0, 5)}`
+      ).join(", ") : "Sin horarios"}</td>
+                
+              <button onClick={() => setSelectedLocal(local)}>Pedir turno</button> 
             </tr>
           ))}
         </tbody>

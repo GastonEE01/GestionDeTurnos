@@ -9,7 +9,7 @@ namespace GestionDeTurnos.Domain.Entities
     public class Turno
     {
         public Guid Id { get; set; }
-        public DateTime Date { get; set; } // Guarda fecha y hora del turno
+        public DateTime Date { get; set; } // esto ya no
 
         // 👤 Quién saca el turno (Si aún no tenés tabla de usuarios, podés dejar ClienteName por ahora)
         public Guid UsuarioId { get; set; }
@@ -22,5 +22,8 @@ namespace GestionDeTurnos.Domain.Entities
         // 📍 En qué local se realiza el turno
         public Guid LocalId { get; set; }
         public Local? Local { get; set; } // Propiedad de navegación
+
+        // Agrego si el turno ya esta pedido o no
+        public bool EstaPedido { get; set; } = true; // Por defecto, cuando se crea un turno, está pedido
     }
 }
