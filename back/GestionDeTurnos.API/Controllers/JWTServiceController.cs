@@ -26,9 +26,9 @@ namespace GestionDeTurnos.API.Controllers
 
        
         [HttpPost("Login")] // 🎯 Endpoint temporal de prueba
-        public IActionResult LoginPrueba([FromBody] LoginRequestDto dto)
+        public async Task<IActionResult> LoginPrueba([FromBody] LoginRequestDto dto)
         {
-            Usuario searchUser = _getUser.GetUser(dto.Email);
+            Usuario searchUser = await _getUser.GetUser(dto.Email);
 
             try
             {

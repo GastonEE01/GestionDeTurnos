@@ -9,7 +9,8 @@ namespace GestionDeTurnos.Application.Interface
 {
     public interface IUserRepository
     {
-        Usuario Add(Usuario user);
-        Usuario GetUser(string email);
+        Task<Usuario> AddAsync(Usuario user);
+        Task<Usuario?> GetUserAsync(string email);
+        Task<Usuario?> GetUsuarioByIdAsync(Guid usuarioId);
     }
 }

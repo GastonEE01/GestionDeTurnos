@@ -3,6 +3,7 @@ using Azure.Identity;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Application.UseCase.Locales;
 using GestionDeTurnos.Application.UseCase.Registros;
+using GestionDeTurnos.Application.UseCase.Servicios;
 using GestionDeTurnos.Application.UseCase.Turnos;
 using GestionDeTurnos.Application.UseCase.Usuarios;
 using GestionDeTurnos.Infrastructure.Data;
@@ -23,19 +24,30 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Repositorios
 builder.Services.AddScoped<ILocalRepository, LocalRepository>();
-builder.Services.AddScoped<TurnoRespository, TurnoRepository>();
+builder.Services.AddScoped<ITurnoRespository, TurnoRepository>();
 builder.Services.AddScoped<IUserRepository, UsuarioRepository>();
 builder.Services.AddScoped<IHorarioAtencionRepository, HorarioAtencionRepository>();
+builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 
 // Servicios
 builder.Services.AddScoped<JWTService>();
 
 // Casos de uso
+builder.Services.AddScoped<AddLocalUseCase>();
 builder.Services.AddScoped<GetLocalUseCase>();
+builder.Services.AddScoped<GetLocalByIdLocalUseCase>();
+builder.Services.AddScoped<GetLocalesByUsuarioIdUseCase>();
+builder.Services.AddScoped<DeleteLocalByIdUseCase>();
+builder.Services.AddScoped<UpdateLocalUseCase>();
+
 builder.Services.AddScoped<AddTurnoUseCase>();
 builder.Services.AddScoped<AddUserUseCase>();
 builder.Services.AddScoped<GetUserUseCase>();
-builder.Services.AddScoped<AddLocalUseCase>();
+
+builder.Services.AddScoped<AddServiceUseCase>();
+builder.Services.AddScoped<UpdateServiceUseCase>();
+builder.Services.AddScoped<DeleteServiceUseCase>();
+builder.Services.AddScoped<GetServiceByLocal>();
 
 
 // // 🔌 Le enseñamos a .NET cómo construir el IMapper usando tu clase de mapeo

@@ -18,10 +18,10 @@ namespace GestionDeTurnos.Application.UseCase.Usuarios
             _userReposirtory = userReposirtory;
         }
 
-        public Usuario GetUser(string email)
+        public async Task<Usuario> GetUser(string email)
         {
             // Buscar al usuario 
-            Usuario user = _userReposirtory.GetUser(email);
+            Usuario user = await _userReposirtory.GetUserAsync(email);
 
             if (user == null)
             {

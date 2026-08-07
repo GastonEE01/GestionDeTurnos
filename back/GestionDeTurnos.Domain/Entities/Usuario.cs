@@ -13,7 +13,7 @@ namespace GestionDeTurnos.Domain.Entities
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Rol {  get; set; } = string.Empty;
-        public Guid? LocalId { get; set; } 
-        public Local? Local { get; set; }
+        public List<Local>? Locales { get; set; }
+
     }
 }

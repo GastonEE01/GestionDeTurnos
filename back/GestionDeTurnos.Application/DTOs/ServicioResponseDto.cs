@@ -4,19 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionDeTurnos.Domain.Entities
+namespace GestionDeTurnos.Application.DTOs
 {
-    public class Servicio
+    public class ServicioResponseDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public int DurationInMinutes { get; set; }  
+        public int DurationInMinutes { get; set; }
         public decimal Price { get; set; }
-
-        // Relación con el Local
-        public Guid LocalId { get; set; } 
-        public Local Local { get; set; }  = null!;
- 
+        public Guid LocalId { get; set; }
     }
 }

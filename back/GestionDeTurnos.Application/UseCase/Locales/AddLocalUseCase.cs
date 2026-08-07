@@ -14,14 +14,15 @@ namespace GestionDeTurnos.Application.UseCase.Locales
     {
         private readonly ILocalRepository _localRepository;
         public readonly IHorarioAtencionRepository _horarioAtencionRepository;
-
-        public AddLocalUseCase(ILocalRepository localRepository,IHorarioAtencionRepository horarioAtencion)
+        private readonly IUserRepository _userRepository;
+        public AddLocalUseCase(ILocalRepository localRepository,IHorarioAtencionRepository horarioAtencionRepository, IUserRepository userRepository)
         {
             _localRepository = localRepository;
-            _horarioAtencionRepository = horarioAtencion;
+            _horarioAtencionRepository = horarioAtencionRepository;
+            _userRepository = userRepository;
         }
 
-        public Local AddLocal(LocalRequestDto localDto, List<HorarioAtencionRequestDto> horariosDto)
+        public async Task<Local> AddLocal(LocalRequestDto localDto, List<HorarioAtencionRequestDto> horariosDto)
         {
             if(localDto == null)
             {
@@ -35,7 +36,8 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             }
 
             // Validar que no exista un local con el mismo nombre
-            _localRepository.GetAll().ToList().ForEach(local =>
+            var locales = await _localRepository.GetAll();
+            locales.ForEach(local =>
             {
                 if (local.Name.Equals(localDto.Name, StringComparison.OrdinalIgnoreCase))
                 {
@@ -43,8 +45,18 @@ namespace GestionDeTurnos.Application.UseCase.Locales
                 }
             });
 
-            // Mejorar que los locales puedan mostrar mas horatios turnos
-            
+            // Validar que el usuario exista y tenga permisos para crear un local
+            var usuario = await _userRepository.GetUsuarioByIdAsync(localDto.UsuarioId);
+            if (usuario == null)
+            {
+                throw new InvalidOperationException("El usuario no existe.");
+            }
+            if(usuario.Rol == "Admin" && usuario.Rol != "Cliente")
+            {
+                throw new InvalidOperationException("El usuario no tiene permisos para crear un local.");
+            }
+
+
             var local = new Local
             {
                 Id = Guid.NewGuid(),
@@ -57,6 +69,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
                 Phone = localDto.Phone,
                 Servicios = new List<Servicio>(),
                 HorariosAtencion = new List<HorarioAtencion>(),
+                UsuarioId = localDto.UsuarioId
             };
 
             // Crear tabla de horarios para el local
@@ -91,10 +104,12 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             return local;
         }
 
-      /*  public object AddLocal(LocalRequestDto local, List<HorarioAtencionRequestDto> horarios)
-        {
-            throw new NotImplementedException();
-        }*/
+       
+
+        /*  public object AddLocal(LocalRequestDto local, List<HorarioAtencionRequestDto> horarios)
+          {
+              throw new NotImplementedException();
+          }*/
     }
  
 }

@@ -15,7 +15,7 @@ namespace GestionDeTurnos.Application.DTOs
           public string ImageURL { get; set; } = string.Empty;
           public string Direction { get; set; } = string.Empty;
           public string Phone { get; set; } = string.Empty;
-          public List<ServicioDto> Servicios { get; set; } = new();
+          public List<ServicioResponseDto> Servicios { get; set; } = new();
         public List<HorarioAtencionRequestDto> HorariosAtencion { get; set; } = new();
     }
 }

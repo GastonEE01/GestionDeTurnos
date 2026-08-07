@@ -18,7 +18,7 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUser(UserRequestDto dto)
+        public async Task<IActionResult> AddUser(UserRequestDto dto)
         {
             if (dto == null)
             {
@@ -26,7 +26,7 @@ namespace GestionDeTurnos.API.Controllers
             }
             try
             {
-                Usuario newUser = _addUsers.addUser(dto);
+                Usuario newUser = await _addUsers.addUser(dto);
                 UserResponseDto response = new UserResponseDto
                 {
                     Id = newUser.Id,

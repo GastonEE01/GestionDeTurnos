@@ -11,14 +11,23 @@ namespace GestionDeTurnos.API.Controllers
     [Route("api/[controller]")]
     public class LocalController : ControllerBase
     {
+        private readonly GetLocalesByUsuarioIdUseCase _getLocalesByUsuarioId;
         private readonly GetLocalUseCase _getLocales;
+        private readonly GetLocalByIdLocalUseCase _getLocalById;
+        private readonly DeleteLocalByIdUseCase _deleteLocalById;
         private readonly AddLocalUseCase _addLocal;
+        private readonly UpdateLocalUseCase _updateLocal;
+
         private readonly IMapper _mapper;
-        public LocalController(GetLocalUseCase getLocalUseCase, AddLocalUseCase addLocalUseCase, IMapper mapper)
+        public LocalController(GetLocalUseCase getLocalUseCase, GetLocalesByUsuarioIdUseCase getLocalesByUsuarioId ,GetLocalByIdLocalUseCase getLocalByIdLocal, DeleteLocalByIdUseCase deleteLocalById, AddLocalUseCase addLocalUseCase, UpdateLocalUseCase updateLocalUseCase, IMapper mapper)
         {
             _getLocales = getLocalUseCase;
+            _getLocalesByUsuarioId = getLocalesByUsuarioId;
+            _getLocalById = getLocalByIdLocal;
+            _deleteLocalById = deleteLocalById;
             _addLocal = addLocalUseCase;
-            _mapper = mapper;
+            _updateLocal = updateLocalUseCase;
+            _mapper = mapper;     
         }
 
         [HttpGet]
@@ -36,6 +45,54 @@ namespace GestionDeTurnos.API.Controllers
             }
         }
 
+        // para usar en el perfil del local, para mostrar los datos del local y sus horarios
+        [HttpGet("{idLocal}")]
+        public async Task<IActionResult> GetLocalById(Guid idLocal)
+        {
+            try
+            {
+                var local = await _getLocalById.GetLocalById(idLocal);
+                if (local == null)
+                {
+                    return NotFound($"No se encontró un local con el ID {idLocal}.");
+                }
+                return Ok(local);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("usuario/{usuarioId}")]
+        public async Task<IActionResult> GetLocalesByUsuario(Guid usuarioId)
+        {
+            try
+            {
+                var locales = await _getLocalesByUsuarioId.GetLocalesByUsuario(usuarioId);
+                return Ok(locales);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{idLocal}")]
+        public ActionResult DeleteLocal(Guid idLocal)
+        {
+            try
+            {
+                _deleteLocalById.DeleteLocal(idLocal);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost]
         public ActionResult AddLocal(CrearLocalRequest dto)
         {
@@ -52,12 +109,40 @@ namespace GestionDeTurnos.API.Controllers
                 var localResponse = _mapper.Map<LocalResponseDto>(local);
                 return Ok(localResponse);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
 
             }
+            catch (InvalidOperationException ex)
+            {
+                // 🚨 409 CONFLICT cuando el turno ya existe
+                return Conflict(new { message = ex.Message });
+            }
         }
+
+        [HttpPut("{idLocal}")]
+        public async Task<ActionResult> modifyLocal([FromRoute] Guid idLocal,[FromBody] UpdateLocalRequestDto dto)
+        {
+            try
+            {
+                var response = await _updateLocal.ExecuteAsync(idLocal, dto);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message }); // 404 NOT FOUND            }
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message }); // 400 BAD REQUEST
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message }); // 409 CONFLICT
+            }
+        }
+
 
 
         // GET: LocalController/Details/5

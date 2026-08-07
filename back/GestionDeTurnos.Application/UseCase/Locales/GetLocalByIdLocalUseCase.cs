@@ -10,27 +10,25 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.UseCase.Locales
 {
-    public class GetLocalUseCase
+    public class GetLocalByIdLocalUseCase
     {
         private readonly ILocalRepository _localRepository;
         private readonly IMapper _mapper;
 
-            public GetLocalUseCase(ILocalRepository localRepository, IMapper mapper)
+        public GetLocalByIdLocalUseCase(ILocalRepository localRepository, IMapper mapper)
         {
             _localRepository = localRepository;
             _mapper = mapper;
-         }
-        public async Task<List<LocalResponseDto>> GetLocal()
-        {
-            var locales = await _localRepository.GetAll();
-
-            // Mapear la lista completa
-            var  localDto = _mapper.Map<List<LocalResponseDto>>(locales);
-            return localDto;
         }
 
-       
-
-       
+        public async Task<LocalResponseDto> GetLocalById(Guid id)
+        {
+            Local searchLocal = await _localRepository.GetLocalById(id);
+            if (searchLocal == null)
+            {
+                throw new Exception("No se encontró el local.");
+            }
+            return _mapper.Map<LocalResponseDto>(searchLocal);
+        }
     }
 }

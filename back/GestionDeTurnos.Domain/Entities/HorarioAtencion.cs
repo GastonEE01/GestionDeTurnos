@@ -24,4 +24,18 @@ namespace GestionDeTurnos.Domain.Entities
 
         public bool EstaCerrado { get; set; } // Por si un local decide cerrar un día específico de la semana
     }
+    /*
+     * 0 = Domingo (Sunday)
+
+1 = Lunes (Monday)
+
+2 = Martes (Tuesday)
+
+3 = Miércoles (Wednesday)
+
+4 = Jueves (Thursday)
+
+5 = Viernes (Friday)
+
+6 = Sábado (Saturday)*/
 }
