@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Identity;
 using GestionDeTurnos.Application.Interface;
+using GestionDeTurnos.Application.UseCase.Horarios;
 using GestionDeTurnos.Application.UseCase.Locales;
 using GestionDeTurnos.Application.UseCase.Registros;
 using GestionDeTurnos.Application.UseCase.Servicios;
@@ -48,6 +49,10 @@ builder.Services.AddScoped<AddServiceUseCase>();
 builder.Services.AddScoped<UpdateServiceUseCase>();
 builder.Services.AddScoped<DeleteServiceUseCase>();
 builder.Services.AddScoped<GetServiceByLocal>();
+
+builder.Services.AddScoped<GetHorariosByLocal>();
+builder.Services.AddScoped<UpdateHorariosByLocal>();
+
 
 
 // // 🔌 Le enseñamos a .NET cómo construir el IMapper usando tu clase de mapeo

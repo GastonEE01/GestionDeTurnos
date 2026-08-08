@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.DTOs
 {
-    public class HorarioAtencionRequestDto
+    public class HorarioAtencionResponseDto
     {
-        public Guid HorarioId { get; set; } 
+        public Guid Id { get; set; }
         public DayOfWeek DiaSemana { get; set; }
 
         // 🕒 Usamos TimeSpan para guardar solo la hora del día (sin fecha)
         public TimeSpan HoraApertura { get; set; } // Ejemplo: 08:00:00
         public TimeSpan HoraCierre { get; set; }   // Ejemplo: 17:00:00
 
-        public bool EstaCerrado { get; set; } 
+        public bool EstaCerrado { get; set; }
     }
 }
