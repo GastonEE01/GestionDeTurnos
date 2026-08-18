@@ -32,9 +32,10 @@ export const Login: React.FC = () => {
       if(response ){
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.response));
-        navigate("/Home")
+        navigate("/Inicio")
         console.log(response);
       }
+      
      //  console.log("Token recibido:", response.token);
       e.currentTarget.reset();
     } catch (error) {
@@ -61,7 +62,8 @@ export const Login: React.FC = () => {
         <button type="submit" disabled={loading}>Ingresar</button>
       </form>
       <h2>
-        ¿No tiene una cuenta? <Link to="/Registro">Registrate</Link>
+        ¿No tiene una cuenta? <Link to="/registro/cliente">Registrate como Cliente</Link>
+        ¿No tiene una cuenta? <Link to="/registro/local">Registrate como Local</Link>
       </h2>
       {message && <h2>{message}</h2>}
     </div>

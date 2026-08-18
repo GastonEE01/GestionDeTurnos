@@ -24,7 +24,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             {
                 throw new ArgumentException("No se encontro el local para eliminar");
             }
-            _localRepository.DeleteLocal(searchLocal);
+            await _localRepository.DeleteLocal(searchLocal);
         }
     }
 }

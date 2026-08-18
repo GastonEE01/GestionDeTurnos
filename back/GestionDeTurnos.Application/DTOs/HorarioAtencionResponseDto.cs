@@ -16,5 +16,6 @@ namespace GestionDeTurnos.Application.DTOs
         public TimeSpan HoraCierre { get; set; }   // Ejemplo: 17:00:00
 
         public bool EstaCerrado { get; set; }
+        public Guid LocalId { get; set; }
     }
 }

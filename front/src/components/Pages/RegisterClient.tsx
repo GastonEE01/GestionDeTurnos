@@ -1,28 +1,14 @@
 import React, { useState,useRef } from "react";
 import { Link } from "react-router-dom";
 import { addUsuario } from "../../service/api";
+import type { UsuarioRegisterDto } from "../../interface/UsuarioType";
 // 1) Definimos el molde del objeto
-export interface UsuarioType {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  rol: string;
-}
 
-export interface UsuarioRegisterDto {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  rol: string;
-}
 
 // Como es una página que carga sola, no requiere Props externas
 
 // 3) Inyectar en el componente
-export const Registro: React.FC = () => {
+export const RegisterClient: React.FC = () => {
   // Estado solo para mostrar el mensaje de existo o error
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState<string>("");
@@ -46,7 +32,7 @@ export const Registro: React.FC = () => {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
-      rol: formData.get("rol") as string,
+      rol: "Cliente",
     };
 
     // Validación express antes de ir al back
@@ -83,7 +69,7 @@ export const Registro: React.FC = () => {
  
     return (
       <div>
-        <h1>Registro</h1>
+        <h1>Registro como cliente</h1>
         <form onSubmit={handleSubmit}>
           <label htmlFor="">Ingrese el nombre</label>
           <input name="name" type="text" />
@@ -97,15 +83,10 @@ export const Registro: React.FC = () => {
           <label htmlFor="">Confirme la contraseña</label>
           <input name="confirmPassword" type="password" />
 
-          <label htmlFor="">Elija su rol</label>
-          <select name="rol" id="rol">
-            <option value="Cliente">Cliente</option>
-            <option value="Local">Local</option>
-          </select>
           <button type="submit"  disabled={loading}>Enviar</button>
         </form>
         <h2>
-          Ya tenes una cuenta?<Link to="/">Logueate</Link>
+          Ya tenes una cuenta?<Link to="/iniciar-sesion">Logueate</Link>
         </h2>
         {message && <h2>{message}</h2>}
       </div>

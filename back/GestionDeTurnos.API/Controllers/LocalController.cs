@@ -27,15 +27,15 @@ namespace GestionDeTurnos.API.Controllers
             _deleteLocalById = deleteLocalById;
             _addLocal = addLocalUseCase;
             _updateLocal = updateLocalUseCase;
-            _mapper = mapper;     
+            //_mapper = mapper;     
         }
 
         [HttpGet]
-        public ActionResult GetLocales()
+        public async Task<ActionResult> GetLocales()
         {
             try
             {
-                var locales = _getLocales.GetLocal();
+                var locales = await _getLocales.GetLocal();
                 return Ok(locales);
             }
             catch (Exception ex)
@@ -79,11 +79,11 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpDelete("{idLocal}")]
-        public ActionResult DeleteLocal(Guid idLocal)
+        public async Task<ActionResult> DeleteLocal(Guid idLocal)
         {
             try
             {
-                _deleteLocalById.DeleteLocal(idLocal);
+               await _deleteLocalById.DeleteLocal(idLocal);
                 return Ok();
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace GestionDeTurnos.API.Controllers
 
 
         [HttpPost]
-        public ActionResult AddLocal(CrearLocalRequest dto)
+        public async Task<ActionResult> AddLocal(CrearLocalRequest dto)
         {
             if (dto.Local == null || dto.Horarios == null)
             {
@@ -103,11 +103,11 @@ namespace GestionDeTurnos.API.Controllers
 
             try
             {
-                var local = _addLocal.AddLocal(dto.Local, dto.Horarios);
+                var local = await _addLocal.AddLocal (dto.Local, dto.Horarios);
                 // Como 'LocalResponseDto' tiene listas de DTOs y NO tiene propiedades de navegación 
                 // hacia atrás, el ciclo infinito desaparece por completo.
-                var localResponse = _mapper.Map<LocalResponseDto>(local);
-                return Ok(localResponse);
+                // aca
+                return Ok(local);
             }
             catch (ArgumentException ex)
             {

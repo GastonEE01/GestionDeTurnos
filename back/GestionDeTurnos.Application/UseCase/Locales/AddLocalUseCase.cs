@@ -15,14 +15,17 @@ namespace GestionDeTurnos.Application.UseCase.Locales
         private readonly ILocalRepository _localRepository;
         public readonly IHorarioAtencionRepository _horarioAtencionRepository;
         private readonly IUserRepository _userRepository;
-        public AddLocalUseCase(ILocalRepository localRepository,IHorarioAtencionRepository horarioAtencionRepository, IUserRepository userRepository)
+        private IMapper _mapper;
+
+        public AddLocalUseCase(ILocalRepository localRepository,IHorarioAtencionRepository horarioAtencionRepository, IUserRepository userRepository,IMapper mapper)
         {
             _localRepository = localRepository;
             _horarioAtencionRepository = horarioAtencionRepository;
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Local> AddLocal(LocalRequestDto localDto, List<HorarioAtencionRequestDto> horariosDto)
+        public async Task<LocalResponseDto> AddLocal(LocalRequestDto localDto, List<HorarioAtencionRequestDto> horariosDto)
         {
             if(localDto == null)
             {
@@ -51,7 +54,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             {
                 throw new InvalidOperationException("El usuario no existe.");
             }
-            if(usuario.Rol == "Admin" && usuario.Rol != "Cliente")
+            if(usuario.Rol == "Cliente")
             {
                 throw new InvalidOperationException("El usuario no tiene permisos para crear un local.");
             }
@@ -64,7 +67,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
                 Description = localDto.Description,
                 Category = localDto.Category,
                 ImageURL = localDto.ImageURL,
-                Title = localDto.Title,
+                //Title = localDto.Title,
                 Direction = localDto.Direction,
                 Phone = localDto.Phone,
                 Servicios = new List<Servicio>(),
@@ -95,13 +98,21 @@ namespace GestionDeTurnos.Application.UseCase.Locales
                 local.HorariosAtencion.Add(horarios);
             }
             _localRepository.Add(local);
-            // Agregar el horario de atención al local
-            /*  List<HorarioAtencion> horarioLocal = _mapper.Map<List<HorarioAtencion>>(horarioDto);
-              local.HorariosAtencion = horarioLocal;
+            // mapear el local 
+            LocalResponseDto response = new LocalResponseDto
+            {
+                Id = local.Id,
+                Name = local.Name,
+                Description = local.Description,
+                Category = local.Category,
+                ImageURL = local.ImageURL,
+                Direction = local.Direction,
+                Phone = local.Phone,
+                Servicios = new List<ServicioResponseDto>(),
+                HorariosAtencion = new List<HorarioAtencionRequestDto>()
+            };
 
-              
-              _horarioAtencionRepository.Add(horarios);*/
-            return local;
+            return _mapper.Map<LocalResponseDto>(local);
         }
 
        

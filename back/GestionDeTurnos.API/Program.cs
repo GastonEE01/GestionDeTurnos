@@ -50,8 +50,8 @@ builder.Services.AddScoped<UpdateServiceUseCase>();
 builder.Services.AddScoped<DeleteServiceUseCase>();
 builder.Services.AddScoped<GetServiceByLocal>();
 
-builder.Services.AddScoped<GetHorariosByLocal>();
-builder.Services.AddScoped<UpdateHorariosByLocal>();
+builder.Services.AddScoped<GetHorariosByLocalUseCase>();
+builder.Services.AddScoped<UpdateHorariosByLocalUseCase>();
 
 
 

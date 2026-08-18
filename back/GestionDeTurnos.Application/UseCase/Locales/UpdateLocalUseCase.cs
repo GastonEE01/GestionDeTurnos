@@ -31,7 +31,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             if (!string.IsNullOrEmpty(dto.Description)) local.Description = dto.Description;
             if (!string.IsNullOrEmpty(dto.Category)) local.Category = dto.Category;
             if (!string.IsNullOrEmpty(dto.ImageURL)) local.ImageURL = dto.ImageURL;  
-            if (!string.IsNullOrEmpty(dto.Title)) local.Title = dto.Title;
+          //  if (!string.IsNullOrEmpty(dto.Title)) local.Title = dto.Title;
             if (!string.IsNullOrEmpty(dto.Direction)) local.Direction = dto.Direction;
             if (!string.IsNullOrEmpty(dto.Phone)) local.Phone = dto.Phone;
 
@@ -43,7 +43,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
                 Description = local.Description,
                 Category = local.Category,
                 ImageURL = local.ImageURL,
-                Title = local.Title,
+              //  Title = local.Title,
                 Direction = local.Direction,
                 Phone = local.Phone
             };

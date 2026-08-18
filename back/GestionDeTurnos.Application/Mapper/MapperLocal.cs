@@ -15,8 +15,13 @@ namespace GestionDeTurnos.Application.Mapper
         public MapperLocal()
         {
             CreateMap<Local, LocalResponseDto>().ReverseMap();
+            CreateMap<LocalRequestDto, Local>().ReverseMap();
+
+            CreateMap<HorarioAtencion, HorarioAtencionResponseDto>().ReverseMap(); CreateMap<Servicio, ServicioResponseDto>();
             CreateMap<HorarioAtencion, HorarioAtencionRequestDto>().ReverseMap();
+
+            CreateMap<Servicio, ServicioResponseDto>().ReverseMap();
         }
-       
+
     }
 }

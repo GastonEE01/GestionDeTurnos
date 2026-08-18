@@ -1,16 +1,64 @@
-import React, { useState } from 'react'
-import type {LocalesTableProps, LocalesType} from '../Locales/LocalesType.ts'
+import React, {  useState } from 'react'
 import {ModalTurno} from '../Turnos/ModalTurno.tsx'
-import { DayOfWeek } from './LocalesType.ts'
-export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => {
-   const [selectedLocal, setSelectedLocal] = useState<LocalesType | null>(null);
+import { ModalLocal } from './ModalLocal.tsx';
+import {ModalService} from '../Servicio/ModalService.tsx'
+// interface
+import type {LocalesTableProps, LocalesType} from '../../interface/LocalesType.ts'
+import { DayOfWeek } from '../../interface/HorarioAtencionType.ts';
+import { deletedLocal } from '../../service/api.ts';
+
+export const LocalesTable: React.FC<LocalesTableProps> = ({data,user,onDeleteSuccess }) => {
+  const [selectedLocal, setSelectedLocal] = useState<LocalesType | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenService, setIsModalOpenService] = useState(false);
+
+  const handleDelete = async (id: string) => {
+    const confirmation = window.confirm("¿Estas seguro de que queres eliminar este local?")
+    if(!confirmation) return;
+
+    try{
+      await deletedLocal(id);
+      if(onDeleteSuccess)
+        onDeleteSuccess(id);
+    } catch(error: any){
+      alert(error.message || "Error al intentar eliminar el local");
+    }
+  };
+
+  const handleAgregar = () => {
+    setSelectedLocal(null); 
+    setIsModalOpen(true); 
+  };
+
+  // ✏️ Abrir modal para EDITAR
+  const handleEditar = (local: LocalesType) => {
+    setSelectedLocal(local); // Cargamos el local a editar
+    setIsModalOpen(true);    // Abrimos el modal
+  };
+  
+  const handleAddDeleteUpdateService = (local: LocalesType) => {
+  setSelectedLocal(local);
+  setIsModalOpenService(true);
+};
+
+  const handleCerrarModalService = () => {
+  setIsModalOpenService(false);
+  setSelectedLocal(null);
+};
+
+ const handleCerrarModal = () => {
+    setIsModalOpen(false);
+    setSelectedLocal(null);
+  };
+
+  if(user.rol === "Cliente")
   return (
     <div>
       <table>
         <thead>
           <tr>
-            <th>Id</th>
-            <th>Nombre</th>
+            <th>Nombre</th>            
             <th>Descripcion</th>
             <th>Categoria</th>
             <th>ImagenURL</th>
@@ -23,9 +71,10 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => 
            
         </thead>
         <tbody>
+         
           {data.map((local) => (
-            <tr key={local.id}>
-              <td>{local.id}</td>
+           
+            <tr key={local.id}>    
               <td>{local.name}</td>
               <td>{local.description}</td>
               <td>{local.category}</td>
@@ -38,16 +87,93 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,usuarioId }) => 
                 ? local.horariosAtencion.map(h => 
         `${h.estaCerrado ? 'Cerrado' : 'Abierto'}: ${DayOfWeek[Number(h.diaSemana) as keyof typeof DayOfWeek]}: ${h.horaApertura.substring(0, 5)} - ${h.horaCierre.substring(0, 5)}`
       ).join(", ") : "Sin horarios"}</td>
-                
+            <td>
               <button onClick={() => setSelectedLocal(local)}>Pedir turno</button> 
+            </td>
             </tr>
           ))}
         </tbody>
       </table>
       {selectedLocal !== null && (
-     <ModalTurno cerrar={() => setSelectedLocal(null)} usuarioId={usuarioId} localId={selectedLocal.id} servicios={selectedLocal.servicios}/> 
+     <ModalTurno cerrar={() => setSelectedLocal(null)} usuarioId={user.id} localId={selectedLocal.id} servicios={selectedLocal.servicios}/> 
   )}
     </div>
-  )
-}
+  ) 
+  else  // Local
+    return (
+    <div>
+      <button onClick={handleAgregar}>+ Agregar local</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Categoria</th>
+            <th>ImagenURL</th>
+            <th>Direccion</th>
+            <th>Telefono</th>
+            <th>Servicios</th>
+            <th>Horarios de Atencion</th>
+            </tr>
+           
+        </thead>
+        <tbody>
+         
+          {data.map((local) => (
+           
+            <tr key={local.id}>    
+              <td>{local.name}</td>
+              <td>{local.description}</td>
+              <td>{local.category}</td>
+              <td>{local.direction}</td>
+              <td>{local.phone}</td>
+              <td>{local.imageURL}</td>
+              <td>{local.servicios.length > 0 
+                ? local.servicios.map(s => s.name).join(", ") : "Sin servicios"}</td>
+              <td>{local.horariosAtencion.length > 0 
+                ? local.horariosAtencion.map(h => 
+        `${h.estaCerrado ? 'Cerrado' : 'Abierto'}: ${DayOfWeek[Number(h.diaSemana) as keyof typeof DayOfWeek]}: ${h.horaApertura.substring(0, 5)} - ${h.horaCierre.substring(0, 5)}`
+      ).join(", ") : "Sin horarios"}</td>   
+      <td>
+              <button onClick={() => handleDelete(local.id)}>Eliminar local</button> 
+            </td>   
+             <td><button onClick={() =>handleEditar(local)}>Modificar local</button></td> 
+            <td><button onClick={() => handleAddDeleteUpdateService(local)}>Servicios</button></td> 
+            </tr>
+          ))}
+        </tbody>
 
+      </table>
+
+    {isModalOpen && (
+      <ModalLocal
+        cerrar={handleCerrarModal}
+        usuarioId={user.id}
+        localToEdit={selectedLocal} // Si es null, el modal sabe que es una CREACIÓN
+        onSuccess={() => {
+          // Acá podés refrescar la tabla si tenés la función
+        }}
+      />
+    )}
+    {isModalOpenService && selectedLocal && (
+      <ModalService
+        cerrar={handleCerrarModalService}
+        local = {selectedLocal} // Si es null, el modal sabe que es una CREACIÓN
+        usuarioId = {user.id}
+        onSuccess={() => {
+          // Acá podés refrescar la tabla si tenés la función
+        }}
+        
+      />
+    )}
+
+    </div>
+  )
+  }
+
+
+// localId={selectedLocal.id} servicios={selectedLocal.servicios} 
+/* onSuccess={() => {
+    //  Acá volvés a traer la lista de la API o actualizás el estado
+    fetchLocales(); 
+  }} */

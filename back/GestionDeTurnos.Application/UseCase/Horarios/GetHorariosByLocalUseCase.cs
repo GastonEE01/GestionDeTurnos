@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.UseCase.Horarios
 {
-    public class GetHorariosByLocal
+    public class GetHorariosByLocalUseCase
     {
         private readonly IHorarioAtencionRepository _horarioAtencionRepository;
         private readonly IMapper _mapper;
 
-        public GetHorariosByLocal(IHorarioAtencionRepository horarioAtencionRepository, IMapper mapper)
+        public GetHorariosByLocalUseCase(IHorarioAtencionRepository horarioAtencionRepository, IMapper mapper)
         {
             _horarioAtencionRepository = horarioAtencionRepository;
             _mapper = mapper;

@@ -25,16 +25,21 @@ namespace GestionDeTurnos.API.Controllers
         }
 
        
-        [HttpPost("Login")] // 🎯 Endpoint temporal de prueba
+        [HttpPost("Login")]
         public async Task<IActionResult> LoginPrueba([FromBody] LoginRequestDto dto)
         {
-            Usuario searchUser = await _getUser.GetUser(dto.Email);
-
             try
             {
-                if (string.IsNullOrEmpty(dto.Password))
+                if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
                 {
-                    return BadRequest("El email es obligatorio.");
+                    return BadRequest("El email y la contraseña son obligatorios.");
+                }
+
+                Usuario searchUser = await _getUser.GetUser(dto.Email);
+
+                if (searchUser == null)
+                {
+                    return BadRequest("Credenciales incorrectas.");
                 }
 
                 var validationPassword = _passwordHasher.VerifyHashedPassword(searchUser, searchUser.PasswordHash, dto.Password);
@@ -43,6 +48,7 @@ namespace GestionDeTurnos.API.Controllers
                 {
                     return BadRequest("Credenciales incorrectas.");
                 }
+
                 string token = _service.GenerateToken(searchUser.Id.ToString(), searchUser.Email, searchUser.Rol);
                 LoginResponseDto response = new LoginResponseDto
                 {

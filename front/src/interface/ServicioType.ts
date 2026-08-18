@@ -1,9 +1,11 @@
 
+
 export interface ServicioType{
-    id: number,
+    id: string,
+    usuarioId: string,
     name: string,
     description: string,
     durationInMinutes: number,
     price: number,
-    localId: number;
+    localId: string;
 }

@@ -1,30 +1,15 @@
-import type { ServicioType } from '../Servicio/ServicioType';
+import type { ServicioType } from './ServicioType';
+import type { HorarioAtencionType } from './HorarioAtencionType';
+import type { LoginResponse } from './LoginType';
 
 
-export const DayOfWeek = {
-  0: 'Domingo',
-  1: 'Lunes',
-  2: 'Martes',
-  3: 'Miércoles',
-  4: 'Jueves',
-  5: 'Viernes',
-  6: 'Sábado'
-} as const;
-
-export interface HorarioAtencionType {
-    localId: string;
-    diaSemana: keyof typeof DayOfWeek;
-    horaApertura: string; // Formato "HH:mm"
-    horaCierre: string;  // Formato "HH:mm"
-    estaCerrado: boolean;
-}
 export interface LocalesType{
     id: string,
     name: string,
     description: string,
     category: string,
     imageURL: string,
-    title: string,
+    //title: string,
     direction: string,
     phone: string,
     // Relacion de local con la lista de servicios
@@ -35,8 +20,20 @@ export interface LocalesType{
 // Representa las propiedades (props) que va a recibir tu componente Tabla
 export interface LocalesTableProps {
   data: LocalesType[];
-  usuarioId: string;
+  user: LoginResponse;
   onEditar?: (id: number) => void;
   onEliminar?: (id: number) => void;
   onAgregarServicio?: (localId: number) => void;
+  onDeleteSuccess?: (id: string) => void;
+}
+
+// DTO para la modificación (PUT)
+export interface UpdateLocalDto {
+  name: string;
+  description: string;
+  category: string;
+  imageURL: string;
+  //title: string;
+  direction: string;
+  phone: string;
 }

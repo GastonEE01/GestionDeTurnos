@@ -33,8 +33,8 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             {
                 return null;
             }
-            return await _context.Usuarios.FirstOrDefaultAsync(l => l.Email == email);
-                
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<Usuario> GetUsuarioByIdAsync(Guid usuarioId)

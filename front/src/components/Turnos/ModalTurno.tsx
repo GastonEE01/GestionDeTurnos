@@ -1,6 +1,6 @@
 // import React from 'react'
 import { useState } from "react";
-import type { ServicioType } from '../Servicio/ServicioType.ts';
+import type { ServicioType } from '../../interface/ServicioType.ts';
 import {addTurno} from '../../service/api.ts'
 
 interface ModalTurnoProps{

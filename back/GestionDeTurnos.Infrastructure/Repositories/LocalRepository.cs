@@ -44,10 +44,10 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
-        public void DeleteLocal(Local searchLocal)
+        public async Task DeleteLocal(Local searchLocal)
         {
             _context.Locales.Remove(searchLocal);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public HorarioAtencion GetHorarioByLocalId(Guid localId)

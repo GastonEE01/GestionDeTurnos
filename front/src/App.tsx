@@ -4,8 +4,12 @@ import {  Route, Routes } from 'react-router-dom'
 // Componentes
 import { Header } from './components/Header/Header'
 import { Home } from './components/Pages/Home'
+
+// Páginas
+import { Landing } from './components/Pages/Landing' 
 import { Login } from './components/Pages/Login' 
-import { Registro } from './components/Pages/Registro'
+import { RegisterClient } from './components/Pages/RegisterClient'
+import { RegisterLocal } from './components/Pages/RegisterLocal'
 
 function App() {
  
@@ -14,25 +18,41 @@ function App() {
     <>
      <div>
       <Routes>
-        <Route path='/Home' element={     
+        <Route path='/' element={     
+        <>
+        <Landing />
+        </>}>
+        </Route>
+
+        <Route path='/registro/cliente' element={     
+        <>
+        <RegisterClient />
+        </>}>
+        </Route>
+
+        <Route path='/registro/local' element={     
+        <>
+        <RegisterLocal />
+        </>}>
+        </Route>
+
+        <Route path='/iniciar-sesion' element={     
+        <>
+        <Login />
+        </>}>
+        </Route>
+
+        <Route path='/Inicio' element={     
         <>
         <Header/>
         <Home/>
         </>}>
         </Route>
         
-        <Route path='/' element={     
-        <>
-        <Login />
-        </>}>
-        </Route>
+        
 
         
-        <Route path='/Registro' element={     
-        <>
-        <Registro />
-        </>}>
-        </Route>
+        
        </Routes>
      </div>
     </>

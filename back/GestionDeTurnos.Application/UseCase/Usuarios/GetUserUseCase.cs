@@ -11,17 +11,17 @@ namespace GestionDeTurnos.Application.UseCase.Usuarios
 {
     public class GetUserUseCase
     {
-        private readonly IUserRepository _userReposirtory;
+        private readonly IUserRepository _userRepository;
 
-        public GetUserUseCase(IUserRepository userReposirtory)
+        public GetUserUseCase(IUserRepository userRepository)
         {
-            _userReposirtory = userReposirtory;
+            _userRepository = userRepository;
         }
 
         public async Task<Usuario> GetUser(string email)
         {
             // Buscar al usuario 
-            Usuario user = await _userReposirtory.GetUserAsync(email);
+            Usuario user = await _userRepository.GetUserAsync(email);
 
             if (user == null)
             {

@@ -17,7 +17,7 @@ namespace GestionDeTurnos.Application.Interface
         Task<Local?> GetLocalById(Guid localId);
         Servicio GetServicioById(Guid servicioId);
         Task<bool> IsLocalOwnerAsync(Guid localId, Guid usuarioId);
-        void DeleteLocal(Local searchLocal);
+        Task DeleteLocal(Local searchLocal);
         Task UpdateAsync(Local local);
         //Local GetById(Guid id);
     }

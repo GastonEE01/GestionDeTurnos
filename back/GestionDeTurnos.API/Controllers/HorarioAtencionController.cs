@@ -1,7 +1,9 @@
 ﻿using GestionDeTurnos.Application.DTOs;
 using GestionDeTurnos.Application.UseCase.Horarios;
 using GestionDeTurnos.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GestionDeTurnos.API.Controllers
 {
@@ -9,10 +11,10 @@ namespace GestionDeTurnos.API.Controllers
     [Route("api/[controller]")]
     public class HorarioAtencionController : ControllerBase
     {
-        private readonly GetHorariosByLocal _getHorariosByLocal;
-        private readonly UpdateHorariosByLocal _updateHorariosByLocal;
+        private readonly GetHorariosByLocalUseCase _getHorariosByLocal;
+        private readonly UpdateHorariosByLocalUseCase _updateHorariosByLocal;
 
-        public HorarioAtencionController(GetHorariosByLocal getHorariosByLocal, UpdateHorariosByLocal updateHorariosByLocal)
+        public HorarioAtencionController(GetHorariosByLocalUseCase getHorariosByLocal, UpdateHorariosByLocalUseCase updateHorariosByLocal)
         {
             _getHorariosByLocal = getHorariosByLocal;
             _updateHorariosByLocal = updateHorariosByLocal;
@@ -33,11 +35,18 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpPut("{localId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateHorariosByLocal(Guid localId, [FromBody] List<HorarioAtencionRequestDto> horarios)
         {
             try
             {
-                List<HorarioAtencionResponseDto> response = await _updateHorariosByLocal.UpdateHorariosByLocalID(localId, horarios);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if(string.IsNullOrEmpty(userIdClaim) )
+                    return Unauthorized(new { message = "Usuario no autenticado." });
+
+                var userId = Guid.Parse(userIdClaim);
+
+                List<HorarioAtencionResponseDto> response = await _updateHorariosByLocal.UpdateHorariosByLocalID(localId,userId, horarios);
                 return Ok(response);
             }
             catch (KeyNotFoundException ex)
