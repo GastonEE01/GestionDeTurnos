@@ -11,6 +11,9 @@ namespace GestionDeTurnos.Application.Interface
     public interface ITurnoRespository
     {
         Task<Turno> addTurnoAsync(Turno dto);
+        Task DeleteTurno(Turno dto);
         Task<bool> AppointmentExistsAsync(Guid localId, DateTime date);
+        Task<Turno> GetByTurnoIdAsync(Guid usuarioId);
+        Task<List<Turno>> GetTurnosByLocalAndFechaAsync(Guid localId, DateTime fecha);
     }
 }

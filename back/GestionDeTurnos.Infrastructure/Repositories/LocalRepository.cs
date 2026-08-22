@@ -50,9 +50,9 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public HorarioAtencion GetHorarioByLocalId(Guid localId)
+        public async Task<HorarioAtencion> GetHorarioByLocalId(Guid localId)
         {
-            return _context.HorariosAtencion.FirstOrDefault(h => h.LocalId == localId);
+            return await _context.HorariosAtencion.FirstOrDefaultAsync(h => h.LocalId == localId);
         }
 
         public async Task<Local?> GetLocalById(Guid localId)
@@ -87,5 +87,7 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context.Locales.Update(local);
             return _context.SaveChangesAsync();
         }
+
+       
     }
 }

@@ -61,12 +61,6 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
             {
                 throw new ArgumentException($"El local atiende de {horarioDia.HoraApertura} a {horarioDia.HoraCierre}.", nameof(dto.Date));
             }
-            
-                
-                if (horaTurno < horarioDia.HoraApertura || horaTurno > horarioDia.HoraCierre)
-                    {
-                throw new ArgumentException($"El local atiende de {horarioDia.HoraApertura} a {horarioDia.HoraCierre}.", nameof(dto.Date));
-            }
 
             // Verificar si ya existe un turno reservado para el mismo local, servicio y fecha
             DateTime fechaUtc = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc);

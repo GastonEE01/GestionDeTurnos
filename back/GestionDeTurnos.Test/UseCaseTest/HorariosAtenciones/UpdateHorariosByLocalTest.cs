@@ -174,7 +174,7 @@ namespace GestionDeTurnos.Test.UseCaseTest.HorariosAtenciones
             // Act & Assert
             // Intentar actualizar con un ID distinto debe lanzar la excepción
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-                _useCase.UpdateHorariosByLocalID(localInexistenteId,usuarioId, requestDto));
+                _useCase.UpdateHorariosByLocalID(localInexistenteId, usuarioId, requestDto));
         }
 
 

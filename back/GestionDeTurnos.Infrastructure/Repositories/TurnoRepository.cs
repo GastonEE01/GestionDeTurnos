@@ -42,9 +42,27 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             }
         }
 
-        /*public bool AppointmentExists(Guid localId, Guid servicioId, DateTime date)
+        public async Task DeleteTurno(Turno dto)
         {
-            throw new NotImplementedException();
-        }*/
+            _context.Turnos.Remove(dto);
+            _context.SaveChangesAsync();
+        }
+
+        public async Task<Turno> GetByTurnoIdAsync(Guid turnoId)
+        {
+            return await _context.Turnos.FirstOrDefaultAsync(s => s.Id == turnoId);
+        }
+
+        public async Task<List<Turno>> GetTurnosByLocalAndFechaAsync(Guid localId, DateTime fecha)
+        {
+            return await _context.Turnos
+         .Where(t => t.LocalId == localId && t.Date.Date == fecha.Date)
+         .ToListAsync();
+
+            /*public bool AppointmentExists(Guid localId, Guid servicioId, DateTime date)
+            {
+                throw new NotImplementedException();
+            }*/
+        }
     }
 }

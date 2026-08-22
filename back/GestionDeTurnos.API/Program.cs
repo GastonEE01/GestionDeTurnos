@@ -41,7 +41,6 @@ builder.Services.AddScoped<GetLocalesByUsuarioIdUseCase>();
 builder.Services.AddScoped<DeleteLocalByIdUseCase>();
 builder.Services.AddScoped<UpdateLocalUseCase>();
 
-builder.Services.AddScoped<AddTurnoUseCase>();
 builder.Services.AddScoped<AddUserUseCase>();
 builder.Services.AddScoped<GetUserUseCase>();
 
@@ -52,6 +51,9 @@ builder.Services.AddScoped<GetServiceByLocal>();
 
 builder.Services.AddScoped<GetHorariosByLocalUseCase>();
 builder.Services.AddScoped<UpdateHorariosByLocalUseCase>();
+
+builder.Services.AddScoped<AddTurnoUseCase>();
+builder.Services.AddScoped<CancelTurnoUseCase>();
 
 
 

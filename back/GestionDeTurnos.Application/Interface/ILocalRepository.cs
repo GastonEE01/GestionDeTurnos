@@ -13,12 +13,13 @@ namespace GestionDeTurnos.Application.Interface
         void Add(Local local);
         Task <List<Local>> GetAll();
         Task <List<Local>> GetLocalByUser(Guid userId);
-        HorarioAtencion GetHorarioByLocalId(Guid localId);
+
         Task<Local?> GetLocalById(Guid localId);
         Servicio GetServicioById(Guid servicioId);
         Task<bool> IsLocalOwnerAsync(Guid localId, Guid usuarioId);
         Task DeleteLocal(Local searchLocal);
         Task UpdateAsync(Local local);
+        Task<HorarioAtencion> GetHorarioByLocalId(Guid localId);
         //Local GetById(Guid id);
     }
 }
