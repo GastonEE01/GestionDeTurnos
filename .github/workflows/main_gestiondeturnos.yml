@@ -22,15 +22,16 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+          
+        - name: Restore dependencies
+        run: dotnet restore ./back/GestionDeTurnos.API/GestionDeTurnos.API.csproj
 
-      - name: Restore dependencies
-        run: dotnet restore ./back
-        
-      - name: Build with dotnet 
-        run: dotnet build ./back --configuration Release --no-restore
+      - name: Build with dotnet
+        run: dotnet build ./back/GestionDeTurnos.API/GestionDeTurnos.API.csproj --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish ./back -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ./back/GestionDeTurnos.API/GestionDeTurnos.API.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
