@@ -1,4 +1,4 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using GestionDeTurnos.Infrastructure.Data;
@@ -20,16 +20,16 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(HorarioAtencion horarios)
+        public async Task Add(HorarioAtencion horario)
         {
-            _context.HorariosAtencion.Add(horarios);
-            _context.SaveChanges();
-          //  return horarios;
+            _context.HorariosAtencion.AddAsync(horario);
         }
 
-        public HorarioAtencion existingHorarios(List<HorarioAtencionRequestDto> horarios)
+        public async Task<HorarioAtencion?> existingHorarios(List<HorarioAtencionRequestDto> horarios)
         {
-            return _context.HorariosAtencion.FirstOrDefault(h => h.DiaSemana == horarios[0].DiaSemana && h.LocalId == horarios[0].HorarioId);
+            if (horarios == null || !horarios.Any()) return null;
+
+            return await _context.HorariosAtencion.FirstOrDefaultAsync(h => h.DiaSemana == horarios[0].DiaSemana && h.LocalId == horarios[0].HorarioId);
         }
 
         public Task<List<HorarioAtencion>> GetHorarioByLocalId(Guid localId)

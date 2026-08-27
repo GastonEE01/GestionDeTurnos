@@ -25,27 +25,17 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             return await _context.Turnos.AnyAsync(t => t.LocalId == localId && t.Date == fecha);
         }
 
-        public async Task<Turno> addTurnoAsync(Turno turno)
-        {
-            try
-            {
-
+        public async Task<Turno> Add(Turno turno)
+        { 
                 _context.Add(turno);
-                _context.SaveChanges();
-                return turno;
-            }
-            catch (DbUpdateException ex)
-            {
-                var error = ex.InnerException.Message;
-                Console.WriteLine($"🚨 ERROR REAL DE POSTGRES: {error}");
-                throw;
-            }
+                _context.SaveChangesAsync();
+                return turno;   
         }
 
-        public async Task DeleteTurno(Turno dto)
+        public async Task Delete(Turno dto)
         {
             _context.Turnos.Remove(dto);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Turno> GetByTurnoIdAsync(Guid turnoId)
@@ -63,6 +53,16 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             {
                 throw new NotImplementedException();
             }*/
+        }
+
+        public async Task<List<Turno>> GetTurnosByUsuarioIdAsync(Guid usuarioId)
+        {
+           return await _context.Turnos
+                .Include(t => t.Servicio)
+                .Include(t => t.Local)
+                .Where(t => t.UsuarioId == usuarioId)
+                .OrderByDescending(t => t.Date)
+                .ToListAsync() ;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
 
             searchTurno.EstaPedido = false;
 
-            await _turnoRepository.DeleteTurno(searchTurno);
+            await _turnoRepository.Delete(searchTurno);
                 }
 
         }

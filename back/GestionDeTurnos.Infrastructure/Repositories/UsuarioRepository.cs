@@ -19,13 +19,18 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Usuario> AddAsync(Usuario user)
+        public async Task<Usuario> Add(Usuario user)
         {
-            _context.Add(user);
+            _context.Usuarios.Add(user);
             await _context.SaveChangesAsync();
             return user;
         }
 
+        public async Task<bool> ExistsByEmailAsync(string email)
+        {
+            return await _context.Usuarios
+                .AnyAsync(x => x.Email.ToLower() == email.ToLower());
+        }
 
         public async Task<Usuario> GetUserAsync(string email)
         { 

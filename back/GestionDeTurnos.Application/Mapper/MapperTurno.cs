@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs.HorarioAtencion;
+using GestionDeTurnos.Application.DTOs.Turno;
 using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Application.Mapper
 {
-    public class MapperHorarioAtencion : Profile
+    public class MapperTurno : Profile
     {
-        public MapperHorarioAtencion()
+        public MapperTurno() 
         {
-            CreateMap<HorarioAtencion, HorarioAtencionResponseDto>().ReverseMap();
+            CreateMap<Turno, AddTurnoResponseDto>().ReverseMap();
         }
     }
 }

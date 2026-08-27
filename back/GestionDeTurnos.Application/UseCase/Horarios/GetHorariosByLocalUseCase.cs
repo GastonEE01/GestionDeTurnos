@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -26,17 +26,6 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
             List<HorarioAtencion> searchHorarios = await _horarioAtencionRepository.GetHorarioByLocalId(localId);
             if(searchHorarios == null || !searchHorarios.Any()) throw new KeyNotFoundException("No se encontraron horarios para el local especificado.");
 
-            // mapear el resultado a un DTO
-            /* var response = new HorarioAtencionResponseDto
-             {
-                 Id = searchHorario.Id,
-                 LocalId = searchHorario.LocalId,
-                 DiaSemana = searchHorario.DiaSemana,
-                 HoraApertura = searchHorario.HoraApertura,
-                 HoraCierre = searchHorario.HoraCierre,
-                 EstaCerrado = searchHorario.EstaCerrado
-             };
-            */
             List<HorarioAtencionResponseDto> response = _mapper.Map<List<HorarioAtencionResponseDto>>(searchHorarios);
             return response;
         }

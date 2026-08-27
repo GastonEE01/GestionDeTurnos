@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionDeTurnos.Application.DTOs
+namespace GestionDeTurnos.Application.DTOs.Servicio
 {
-    public class UpdateServiceRequestDto
+    public class UpdateServicioRequestDto
     {
         public string? Name { get; set; }
         public string? Description { get; set; } 

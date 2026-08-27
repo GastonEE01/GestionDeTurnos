@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionDeTurnos.Application.DTOs
+namespace GestionDeTurnos.Application.DTOs.Usuario
 {
     public class LoginRequestDto
     {

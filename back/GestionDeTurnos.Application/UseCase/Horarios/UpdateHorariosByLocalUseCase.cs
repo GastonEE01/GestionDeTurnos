@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -28,8 +28,10 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
 
         public async Task<List<HorarioAtencionResponseDto>> UpdateHorariosByLocalID(Guid localId,Guid userId, List<HorarioAtencionRequestDto> horarios)
         {
+            if (horarios == null) throw new ArgumentException("Debe proporcionar al menos un horario de atención.");
+
             var local = await _localRepository.GetLocalById(localId);
-            if (local == null) throw new Exception("El local especificado no existe");
+            if (local == null) throw new KeyNotFoundException("El local especificado no existe");
 
             if(local.UsuarioId != userId) throw new UnauthorizedAccessException("No tenés permisos para modificar este local.");
 
@@ -42,13 +44,12 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
             // Actualizar los horarios existentes
             foreach (var horarioDto in horarios)
             {
-                HorarioAtencion existingHorario = searchHorario.FirstOrDefault(h => h.DiaSemana == horarioDto.DiaSemana); if (existingHorario != null)
-
                 if (horarioDto.HoraApertura > horarioDto.HoraCierre) throw new ArgumentException("La hora de apertura no puede ser mayor que la de cierre.");
-                    
+
+                HorarioAtencion existingHorario = searchHorario.FirstOrDefault(h => h.DiaSemana == horarioDto.DiaSemana); 
+
                 if (existingHorario != null)
                     {
-
                         existingHorario.HoraApertura = horarioDto.HoraApertura;
                         existingHorario.HoraCierre = horarioDto.HoraCierre;
                         existingHorario.EstaCerrado = horarioDto.EstaCerrado;
@@ -58,17 +59,22 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
                     // Si no existe un horario para ese día, crear uno nuevo
                     var newHorario = new HorarioAtencion
                     {
+                        Id = Guid.NewGuid(),
                         LocalId = localId,
                         DiaSemana = horarioDto.DiaSemana,
                         HoraApertura = horarioDto.HoraApertura,
                         HoraCierre = horarioDto.HoraCierre,
                         EstaCerrado = horarioDto.EstaCerrado
                     };
+                    await _horarioAtencionRepository.Add(newHorario);
                     searchHorario.Add(newHorario);
                 }
             }
             await _horarioAtencionRepository.SaveChangesAsync();
-            return _mapper.Map<List<HorarioAtencionResponseDto>>(searchHorario);
+            List<HorarioAtencionResponseDto> response = _mapper.Map<List<HorarioAtencionResponseDto>>(searchHorario);
+            
+            return response;
+
         }
     }
 }

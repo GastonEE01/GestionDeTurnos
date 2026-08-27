@@ -1,4 +1,4 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using GestionDeTurnos.Application.DTOs.Local;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -20,10 +20,17 @@ namespace GestionDeTurnos.Application.UseCase.Locales
 
         public async Task<UpdateLocalResponseDto> ExecuteAsync(Guid idLocal, UpdateLocalRequestDto dto)
         {
+    
             Local? local = await _localRepository.GetLocalById(idLocal);
-            if (local == null)
+            if (local == null) throw new KeyNotFoundException("Local no encontrado");
+
+            if (dto == null) throw new ArgumentException("Debe proporcionar al menos un campo para actualizar.");
+
+            if (!string.IsNullOrEmpty(dto.Name) && dto.Name != local.Name)
             {
-                throw new KeyNotFoundException("Local no encontrado");
+                bool existeNombre = await _localRepository.ExistsByNameAsync(dto.Name);
+                if (existeNombre)
+                    throw new InvalidOperationException("Ya existe otro local con ese nombre.");
             }
 
             // Verificar si los campos del DTO son nulos o vacíos antes de actualizar
@@ -31,21 +38,19 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             if (!string.IsNullOrEmpty(dto.Description)) local.Description = dto.Description;
             if (!string.IsNullOrEmpty(dto.Category)) local.Category = dto.Category;
             if (!string.IsNullOrEmpty(dto.ImageURL)) local.ImageURL = dto.ImageURL;  
-          //  if (!string.IsNullOrEmpty(dto.Title)) local.Title = dto.Title;
             if (!string.IsNullOrEmpty(dto.Direction)) local.Direction = dto.Direction;
             if (!string.IsNullOrEmpty(dto.Phone)) local.Phone = dto.Phone;
 
-            await _localRepository.UpdateAsync(local);
-            // Mapear el response 
+            await _localRepository.Update(local);
             UpdateLocalResponseDto responseDto = new UpdateLocalResponseDto
             {   
                 Name = local.Name,
                 Description = local.Description,
                 Category = local.Category,
                 ImageURL = local.ImageURL,
-              //  Title = local.Title,
                 Direction = local.Direction,
-                Phone = local.Phone
+                Phone = local.Phone,
+                Message = "Local actualizado"
             };
             return responseDto;
         }

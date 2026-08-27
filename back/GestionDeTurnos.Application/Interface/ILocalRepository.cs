@@ -10,16 +10,17 @@ namespace GestionDeTurnos.Application.Interface
 {
     public interface ILocalRepository
     {
-        void Add(Local local);
+        Task<Local> Add(Local local);
         Task <List<Local>> GetAll();
         Task <List<Local>> GetLocalByUser(Guid userId);
 
         Task<Local?> GetLocalById(Guid localId);
         Servicio GetServicioById(Guid servicioId);
         Task<bool> IsLocalOwnerAsync(Guid localId, Guid usuarioId);
-        Task DeleteLocal(Local searchLocal);
-        Task UpdateAsync(Local local);
+        Task Delete(Local searchLocal);
+        Task<Local> Update(Local local);
         Task<HorarioAtencion> GetHorarioByLocalId(Guid localId);
+        Task<bool> ExistsByNameAsync(string name);
         //Local GetById(Guid id);
     }
 }

@@ -20,11 +20,9 @@ namespace GestionDeTurnos.Application.UseCase.Locales
         public async Task DeleteLocal(Guid id)
         {
             Local searchLocal = await _localRepository.GetLocalById(id);
-            if (searchLocal == null)
-            {
-                throw new ArgumentException("No se encontro el local para eliminar");
-            }
-            await _localRepository.DeleteLocal(searchLocal);
+            if (searchLocal == null) throw new ArgumentException("No se encontro el local para eliminar");
+            
+            await _localRepository.Delete(searchLocal);
         }
     }
 }

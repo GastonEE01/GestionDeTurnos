@@ -1,4 +1,4 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using GestionDeTurnos.Application.DTOs.Usuario;
 using GestionDeTurnos.Application.UseCase.Usuarios;
 using GestionDeTurnos.Domain.Entities;
 using GestionDeTurnos.Infrastructure.Services;

@@ -1,4 +1,5 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using GestionDeTurnos.Application.DTOs.Turno;
+using GestionDeTurnos.Application.DTOs.TurnoDTO;
 using GestionDeTurnos.Application.UseCase.Turnos;
 using GestionDeTurnos.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -11,40 +12,43 @@ namespace GestionDeTurnos.API.Controllers
     public class TurnoController : ControllerBase
     {
         private readonly  AddTurnoUseCase _addTurnoUseCase;
-        public TurnoController(AddTurnoUseCase addTurnoUseCase) {
+        private readonly CancelTurnoUseCase _cancelTurnoUseCase;
+        private readonly GetTurnosPorUsuarioUseCase _getTurnosPorUsuarioUseCase;
+        private readonly GetTurnosSlotUseCase _getTurnosSlotUseCase;
+
+        public TurnoController(AddTurnoUseCase addTurnoUseCase,CancelTurnoUseCase cancelTurnoUseCase,GetTurnosPorUsuarioUseCase getTurnosPorUsuarioUseCase,GetTurnosSlotUseCase getTurnosSlotUseCase) {
             _addTurnoUseCase = addTurnoUseCase;
+            _cancelTurnoUseCase= cancelTurnoUseCase;
+            _getTurnosPorUsuarioUseCase = getTurnosPorUsuarioUseCase;
+            _getTurnosSlotUseCase = getTurnosSlotUseCase;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTurno(TurnoRequestDto dto)
+        public async Task<IActionResult> AddTurno(AddTurnoRequestDto dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("Error al pedir turno");
-            }
-
-            try
-            {
-                Turno turno = await _addTurnoUseCase.AddTurno(dto);
-                TurnoResponseDto response = new TurnoResponseDto
-                {
-                    Id = turno.Id,
-                    Date = turno.Date,
-                    Message = "Turno creado con exito"
-                };
+                var response = await _addTurnoUseCase.AddTurno(dto);
                 return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                // Muestra errores de validación de negocio (400 Bad Request)
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                // 🚨 409 CONFLICT cuando el turno ya existe
-                return Conflict(new { message = ex.Message });
-            }
+        }
 
+        [HttpDelete("{turnoId}/cancelar")]
+        public async Task<IActionResult> CancelTurno(Guid turnoId, Guid usuarioId) 
+        {                
+            await _cancelTurnoUseCase.CancelTurno(turnoId, usuarioId);
+            return Ok();    
+        }
+
+        [HttpGet("usuario/{usuarioId}")]
+        public async Task<IActionResult> GetTurnosUser(Guid usuarioId)
+        {
+            GetTurnosUsuarioResponse turnos = await _getTurnosPorUsuarioUseCase.GetTurnosByUser(usuarioId);
+            return Ok(turnos);
+        }
+
+        [HttpGet("Disponibles")]
+        public async Task<IActionResult> GetTurnosSlot(Guid localId,Guid servicioId, DateTime fecha)
+        {
+            List<TimeSpan> turnosSlot = await _getTurnosSlotUseCase.GetTurnos(localId,servicioId,fecha);
+            return Ok(turnosSlot);  
         }
     }
 }

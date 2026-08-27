@@ -1,15 +1,15 @@
-﻿using System;
+﻿using GestionDeTurnos.Application.DTOs.HorarioAtencion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionDeTurnos.Application.DTOs
+namespace GestionDeTurnos.Application.DTOs.Local
 {
-    public class CrearLocalRequest
+    public class AddLocalRequest
     {
         public LocalRequestDto Local { get; set; } = new LocalRequestDto();
-        //public HorarioAtencionRequestDto Horario { get; set; } = new HorarioAtencionRequestDto();
         public List<HorarioAtencionRequestDto> Horarios { get; set; } = new List<HorarioAtencionRequestDto>();
 
     }

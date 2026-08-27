@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.Local;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -20,12 +20,12 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             _localRepository = localRepository;
             _mapper = mapper;
          }
-        public async Task<List<LocalResponseDto>> GetLocal()
+        public async Task<List<AddLocalResponseDto>> GetLocal()
         {
             var locales = await _localRepository.GetAll();
 
             // Mapear la lista completa
-            var  localDto = _mapper.Map<List<LocalResponseDto>>(locales);
+            var  localDto = _mapper.Map<List<AddLocalResponseDto>>(locales);
             return localDto;
         }
 

@@ -19,13 +19,10 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
 
         public async Task DeleteService(Guid serviceId)
         {
-            Servicio searchSservice = await _servicioRepository.GetServiceById(serviceId);
-            if (searchSservice == null)
-            {
-                throw new ArgumentException("No se encontro el servicio para eliminar");
-
-            }
-            _servicioRepository.DeleteServicio(searchSservice);
+            Servicio searchService = await _servicioRepository.GetServiceById(serviceId);
+            if (searchService == null) throw new ArgumentException("No se encontro el servicio para eliminar");
+   
+            _servicioRepository.Delete(searchService);
         }
     }
 }

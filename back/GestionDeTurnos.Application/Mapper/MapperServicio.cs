@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.Servicio;
 using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,9 @@ namespace GestionDeTurnos.Application.Mapper
     {
         public MapperServicio()
         {
-            CreateMap<Servicio, ServicioResponseDto>().ReverseMap();
+            CreateMap<Servicio, AddServicioResponseDto>().ReverseMap();
+            CreateMap<Servicio, UpdateServicioResponseDto>().ReverseMap();
+
         }
     }
 }

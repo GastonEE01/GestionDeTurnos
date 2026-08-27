@@ -19,13 +19,12 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(Local local)
+        public async Task<Local> Add(Local local)
         {
             _context.Locales.Add(local);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return local;
         }
-
-       
 
         public async Task<List<Local>> GetAll()
         {
@@ -33,7 +32,6 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                    .Include(l => l.Servicios) 
                    .Include(l => l.HorariosAtencion)
                    .ToListAsync();
-
         }
 
         public async Task<Local?> GetById(Guid id)
@@ -44,7 +42,7 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
-        public async Task DeleteLocal(Local searchLocal)
+        public async Task Delete(Local searchLocal)
         {
             _context.Locales.Remove(searchLocal);
             await _context.SaveChangesAsync();
@@ -82,12 +80,17 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 .AnyAsync(l => l.Id == localId && l.UsuarioId == usuarioId);
         }
 
-        public Task UpdateAsync(Local local)
+        public async Task<Local> Update(Local local)
         {
             _context.Locales.Update(local);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return local;
         }
 
-       
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+           return await _context.Locales
+          .AnyAsync(l => l.Name.ToLower() == name.ToLower());
+        }
     }
 }

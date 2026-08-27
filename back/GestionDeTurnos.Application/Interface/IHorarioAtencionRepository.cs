@@ -1,4 +1,4 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,8 +10,8 @@ namespace GestionDeTurnos.Application.Interface
 {
     public interface IHorarioAtencionRepository
     {
-        void Add(HorarioAtencion horarios);
-        HorarioAtencion existingHorarios(List<HorarioAtencionRequestDto> horarios);
+        Task Add(HorarioAtencion horarios);
+        Task <HorarioAtencion> existingHorarios(List<HorarioAtencionRequestDto> horarios);
         Task<List<HorarioAtencion>> GetHorarioByLocalId(Guid localId);
         Task SaveChangesAsync();
         Task<HorarioAtencion> UpdateHorario(HorarioAtencion existingHorario);

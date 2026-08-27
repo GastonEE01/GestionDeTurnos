@@ -1,4 +1,5 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using AutoMapper;
+using GestionDeTurnos.Application.DTOs.Turno;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -14,62 +15,49 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
         private readonly ITurnoRespository _turnoRespository;
         private readonly IUserRepository _usuarioRepository;
         private readonly ILocalRepository _localRepository;
-        public AddTurnoUseCase(ITurnoRespository turnoRespository, IUserRepository usuarioRepository, ILocalRepository localRepository)
+        private readonly IServicioRepository _servicioRepository;
+
+        private readonly IMapper _mapper;
+        public AddTurnoUseCase(ITurnoRespository turnoRespository, IUserRepository usuarioRepository, ILocalRepository localRepository,IServicioRepository servicioRepository, IMapper mapper)
         {
             _turnoRespository = turnoRespository;
             _usuarioRepository = usuarioRepository;
             _localRepository = localRepository;
+            _servicioRepository = servicioRepository;
+            _mapper = mapper;
         }
     
 
-    public async Task<Turno> AddTurno(TurnoRequestDto dto)
+    public async Task<AddTurnoResponseDto> AddTurno(AddTurnoRequestDto dto)
         {
-            // Mapear 
+
+            if (dto == null) throw new ArgumentException("Debe enviar los datos requeridos para reservar el turno.");
+
             // validar que el usuario este logueado
             Usuario searchUser = await _usuarioRepository.GetUsuarioByIdAsync(dto.UsuarioId);
-            if (searchUser == null )
-            {
-                throw new ArgumentException("El usuario no existe", nameof(dto.UsuarioId));
-            }
+            if (searchUser == null ) throw new KeyNotFoundException("El usuario no existe");
             
             // validar que el turno exista en el local y servicio correspondiente
             Local local = await _localRepository.GetLocalById(dto.LocalId);
-            if (local == null)
-            {
-                throw new ArgumentException("El local no existe", nameof(dto.LocalId));
-            }
-          
-            Servicio servicio =  _localRepository.GetServicioById(dto.ServicioId);
-                if (servicio == null)
-                {
-                    throw new ArgumentException("El servicio no existe", nameof(dto.ServicioId));
-                }
-
-
+            if (local == null) throw new KeyNotFoundException("El local no existe");
+         
+            Servicio servicio =  await _servicioRepository.GetServiceById(dto.ServicioId);
+            if (servicio == null) throw new KeyNotFoundException("El servicio no existe");
+                
             // validar que existe un turno disponible en la fecha y hora solicitada
             // HorarioAtencion horario = _localRepository.GetHorarioByLocalId(dto.LocalId);
             DayOfWeek diaReserva = dto.Date.DayOfWeek;
             var horarioDia = local.HorariosAtencion.FirstOrDefault(h => h.DiaSemana == diaReserva);
-            if (horarioDia == null || horarioDia.EstaCerrado)
-            {
-                throw new ArgumentException("El local se encuentra cerrado el día seleccionado.", nameof(dto.Date));
+            if (horarioDia == null || horarioDia.EstaCerrado) throw new InvalidOperationException("El local se encuentra cerrado el día seleccionado.");
 
-            }
             // Extraer el horario de atención del local para el día de la reserva
             TimeSpan horaTurno = dto.Date.TimeOfDay;
-            if(horaTurno < horarioDia.HoraApertura || horaTurno > horarioDia.HoraCierre)
-            {
-                throw new ArgumentException($"El local atiende de {horarioDia.HoraApertura} a {horarioDia.HoraCierre}.", nameof(dto.Date));
-            }
+            if(horaTurno < horarioDia.HoraApertura || horaTurno > horarioDia.HoraCierre) throw new InvalidOperationException($"El local atiende de {horarioDia.HoraApertura:hh\\:mm} a {horarioDia.HoraCierre:hh\\:mm}.");
 
             // Verificar si ya existe un turno reservado para el mismo local, servicio y fecha
             DateTime fechaUtc = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc);
             bool turnoExistente = await _turnoRespository.AppointmentExistsAsync(dto.LocalId, fechaUtc);
-            if (turnoExistente)
-            {
-                throw new ArgumentException("Ya existe un turno reservado para este local en la fecha y hora seleccionadas.", nameof(dto.Date));
-            }
-
+            if (turnoExistente) throw new InvalidOperationException("Ya existe un turno reservado para este local en la fecha y hora seleccionadas");
 
             Turno turno = new Turno{
                 Date = DateTime.SpecifyKind(dto.Date,DateTimeKind.Utc),
@@ -78,40 +66,16 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
                 UsuarioId = dto.UsuarioId,
                 EstaPedido = dto.EstaPedido,
             };
-            await _turnoRespository.addTurnoAsync(turno);
-            if (turno == null)
-            {
-                throw new Exception("Error al pedir un turno");
-            }
-            return turno;
+            
+            await _turnoRespository.Add(turno);
+
+            AddTurnoResponseDto response = _mapper.Map<AddTurnoResponseDto>(turno);
+            response.Message = "Turno reservado ";
+         
+            return response;
         }
     }
 }
 
-
-
-/*public class TurnoRespositoryEf : ITurnoRespository
-{
-    private readonly YourDbContext _context;
-
-    public TurnoRespositoryEf(YourDbContext context)
-    {
-        _context = context;
-    }
-
-    public Turno addTurno(Turno dto)
-    {
-        _context.Turnos.Add(dto);
-        _context.SaveChanges();
-        return dto;
-    }
-
-    public bool ExisteTurno(Guid localId, Guid servicioId, DateTime date)
-    {
-        // comparar según la lógica de tu modelo (fecha exacta u rango)
-        return _context.Turnos.Any(t => t.LocalId == localId
-                                     && t.ServicioId == servicioId
-                                     && t.Date == date);
-    }*/
 
 

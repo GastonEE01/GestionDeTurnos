@@ -10,10 +10,11 @@ namespace GestionDeTurnos.Application.Interface
 {
     public interface ITurnoRespository
     {
-        Task<Turno> addTurnoAsync(Turno dto);
-        Task DeleteTurno(Turno dto);
+        Task<Turno> Add(Turno dto);
+        Task Delete(Turno dto);
         Task<bool> AppointmentExistsAsync(Guid localId, DateTime date);
         Task<Turno> GetByTurnoIdAsync(Guid usuarioId);
         Task<List<Turno>> GetTurnosByLocalAndFechaAsync(Guid localId, DateTime fecha);
+        Task<List<Turno>> GetTurnosByUsuarioIdAsync(Guid usuarioId);
     }
 }

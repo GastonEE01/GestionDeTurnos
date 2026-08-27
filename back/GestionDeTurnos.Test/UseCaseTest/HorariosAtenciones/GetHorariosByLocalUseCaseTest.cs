@@ -1,5 +1,5 @@
 using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Application.UseCase.Horarios;
 using GestionDeTurnos.Application.UseCase.Locales;

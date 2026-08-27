@@ -19,36 +19,29 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(Servicio servicio)
+
+        public async Task<Servicio> Add(Servicio servicio)
         {
-            throw new NotImplementedException();
+            _context.Servicios.Add(servicio);
+            await _context.SaveChangesAsync();
+            return servicio;
         }
 
-        public async Task<Servicio> AddServicio(Servicio servicio)
-        {
-            try
-            {
-                _context.Servicios.Add(servicio);
-                await _context.SaveChangesAsync();
-                return servicio;
-            }
-            catch (Exception ex)
-            {
-                var error = ex.InnerException.Message;
-                Console.WriteLine($"🚨 ERROR REAL DE POSTGRES: {error}");
-                throw;
-            }
-        }
-
-        public void DeleteServicio(Servicio searchSservice)
+        public async Task Delete(Servicio searchSservice)
         {
             _context.Servicios.Remove(searchSservice);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Servicio> GetServiceById(Guid serviceId)
+        public async Task<bool> ExistsByNameAsync(string name)
         {
-            return _context.Servicios
+            return await _context.Servicios
+                    .AnyAsync(l => l.Name.ToLower() == name.ToLower());
+        }
+
+        public async Task<Servicio> GetServiceById(Guid serviceId)
+        {
+            return await _context.Servicios
                 .Include(s => s.Local)
                 .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
@@ -67,10 +60,11 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 .AnyAsync(s => s.LocalId == localId && s.Name.ToLower() == name.ToLower());
         }
 
-        public Task UpdateService(Servicio searchService)
+        public async Task<Servicio> Update(Servicio searchService)
         {
             _context.Servicios.Update(searchService);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return searchService;
         }
     }
 }

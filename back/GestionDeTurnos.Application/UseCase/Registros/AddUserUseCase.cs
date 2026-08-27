@@ -1,4 +1,5 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using AutoMapper;
+using GestionDeTurnos.Application.DTOs.Usuario;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -13,19 +14,25 @@ namespace GestionDeTurnos.Application.UseCase.Registros
 {
     public class AddUserUseCase 
     {
-        private readonly IUserRepository _userReposirtory;
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public AddUserUseCase(IUserRepository userRepository)
+        public AddUserUseCase(IUserRepository userRepository,IMapper mapper)
         {
-            _userReposirtory = userRepository;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
-        public async Task<Usuario> addUser(UserRequestDto dto)
+        public async Task<UserResponseDto> AddUser(UserRequestDto dto)
         {
             // validar datos
+            if (dto == null) throw new ArgumentException("No se pude registrar ");
 
             // validar  el gmail
-            if (!dto.Email.Contains("@") || !dto.Email.EndsWith("gmail.com"))
-                throw new ValidationException("El email debe ser una direccion valida de Gmail(debe contener '@' y terminar en gmail.com.");
+            if (string.IsNullOrWhiteSpace(dto.Email) || !dto.Email.Contains("@") || !dto.Email.EndsWith("gmail.com"))
+                throw new ArgumentException("El email debe ser una dirección válida de Gmail (debe contener '@' y terminar en 'gmail.com').");
+
+            bool emailExiste = await _userRepository.ExistsByEmailAsync(dto.Email);
+            if (emailExiste) throw new InvalidOperationException("El email ingresado ya se encuentra registrado.");
 
             // validar  la contraseña 
             bool containMayus = dto.Password.Any(Char.IsUpper);
@@ -33,10 +40,10 @@ namespace GestionDeTurnos.Application.UseCase.Registros
             bool containNumber = dto.Password.Any(Char.IsDigit);
 
             if (dto.Password.Length <= 5 || !containMayus || !containMinus || !containNumber)
-                throw new ValidationException("La contraseña debe tener 6 o mas caracteres y contener una letra mayuscula,una minuscula y un numero");
+                throw new ArgumentException("La contraseña debe tener 6 o mas caracteres y contener una letra mayuscula,una minuscula y un numero");
 
             if (!dto.Password.Equals(dto.ConfirmPassword))
-                throw new ValidationException("La contraseña no coincide con la contraseña confirmada");
+                throw new ArgumentException("La contraseña no coincide con la contraseña confirmada");
 
             var passworHasher = new PasswordHasher<Usuario>();
             var user = new Usuario
@@ -50,12 +57,12 @@ namespace GestionDeTurnos.Application.UseCase.Registros
             string passworHasherConfirm = passworHasher.HashPassword(user, dto.Password);
 
             user.PasswordHash = passworHasherConfirm;
-            await _userReposirtory.AddAsync(user);
+            await _userRepository.Add(user);
 
-
-            return user;
-           
-
+            var response = _mapper.Map<UserResponseDto>(user);
+            response.Id = user.Id;
+            response.Message = "Registro exitoso";
+            return response;
         }
 
     }

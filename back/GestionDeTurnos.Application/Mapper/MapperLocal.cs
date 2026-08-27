@@ -1,11 +1,13 @@
-﻿using GestionDeTurnos.Application.DTOs;
-using GestionDeTurnos.Domain.Entities;
+﻿using GestionDeTurnos.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using GestionDeTurnos.Application.DTOs.Local;
+using GestionDeTurnos.Application.DTOs.Servicio;
+using GestionDeTurnos.Application.DTOs.HorarioAtencion;
 
 
 namespace GestionDeTurnos.Application.Mapper
@@ -14,13 +16,12 @@ namespace GestionDeTurnos.Application.Mapper
     {
         public MapperLocal()
         {
-            CreateMap<Local, LocalResponseDto>().ReverseMap();
+            CreateMap<Local, AddLocalResponseDto>().ReverseMap();
             CreateMap<LocalRequestDto, Local>().ReverseMap();
 
-            CreateMap<HorarioAtencion, HorarioAtencionResponseDto>().ReverseMap(); CreateMap<Servicio, ServicioResponseDto>();
+            CreateMap<HorarioAtencion, HorarioAtencionResponseDto>().ReverseMap(); CreateMap<Servicio, GetServicioByLocalResponseDto>();
             CreateMap<HorarioAtencion, HorarioAtencionRequestDto>().ReverseMap();
 
-            CreateMap<Servicio, ServicioResponseDto>().ReverseMap();
         }
 
     }

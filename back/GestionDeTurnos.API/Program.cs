@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure.Identity;
+using GestionDeTurnos.API.Middlewares;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Application.UseCase.Horarios;
 using GestionDeTurnos.Application.UseCase.Locales;
@@ -54,6 +55,8 @@ builder.Services.AddScoped<UpdateHorariosByLocalUseCase>();
 
 builder.Services.AddScoped<AddTurnoUseCase>();
 builder.Services.AddScoped<CancelTurnoUseCase>();
+builder.Services.AddScoped<GetTurnosPorUsuarioUseCase>();
+builder.Services.AddScoped<GetTurnosSlotUseCase>();
 
 
 
@@ -157,6 +160,8 @@ app.UseSwaggerUI(c =>
     });
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication(); 
 

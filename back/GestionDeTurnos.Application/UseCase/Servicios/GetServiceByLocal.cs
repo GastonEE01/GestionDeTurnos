@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GestionDeTurnos.Application.DTOs;
+using GestionDeTurnos.Application.DTOs.Servicio;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -23,14 +23,14 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
             _mapper = mapper;
         }
 
-        public async Task<List<ServicioResponseDto>> GetServiciosByLocal(Guid localId)
+        public async Task<List<GetServicioByLocalResponseDto>> GetServiciosByLocal(Guid localId)
         {
             Local searchLocal = await _localRepository.GetLocalById(localId);
 
-            if (searchLocal == null) throw new Exception("No se encontro el local");
+            if (searchLocal == null) throw new KeyNotFoundException("No se encontro el local");
 
             List<Servicio> servicios = await _servicioRepository.GetServiciosByLocal(localId);
-            List<ServicioResponseDto> servicioDto = _mapper.Map<List<ServicioResponseDto>>(servicios);
+            List<GetServicioByLocalResponseDto> servicioDto = _mapper.Map<List<GetServicioByLocalResponseDto>>(servicios);
             return servicioDto;
         }
     }

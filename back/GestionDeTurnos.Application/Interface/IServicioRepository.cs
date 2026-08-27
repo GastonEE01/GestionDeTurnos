@@ -9,11 +9,12 @@ namespace GestionDeTurnos.Application.Interface
 {
     public interface IServicioRepository
     {
-        Task<Servicio> AddServicio(Servicio servicio);
-        void DeleteServicio(Servicio searchSservice);
+        Task<Servicio> Add(Servicio servicio);
+        Task Delete(Servicio searchSservice);
+        Task<bool> ExistsByNameAsync(string name);
         Task<Servicio> GetServiceById(Guid serviceId);
         Task<List<Servicio>> GetServiciosByLocal(Guid localId);
         Task<bool> ServiceExistsInLocalAsync(string name, Guid localId);
-        Task UpdateService(Servicio searchService);
+        Task<Servicio> Update(Servicio searchService);
     }
 }

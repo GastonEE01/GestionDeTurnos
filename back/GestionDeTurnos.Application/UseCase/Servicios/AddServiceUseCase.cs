@@ -1,4 +1,5 @@
-﻿using GestionDeTurnos.Application.DTOs;
+﻿using AutoMapper;
+using GestionDeTurnos.Application.DTOs.Servicio;
 using GestionDeTurnos.Application.Interface;
 using GestionDeTurnos.Domain.Entities;
 using System;
@@ -14,46 +15,34 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
         private readonly ILocalRepository _localRepository;
         private readonly IUserRepository _userRepository;
         private readonly IServicioRepository _servicioRepository;
-
-        public AddServiceUseCase(ILocalRepository localRepository, IUserRepository userRepository, IServicioRepository servicioRepository)
+        private readonly IMapper _mapper;
+        public AddServiceUseCase(ILocalRepository localRepository, IUserRepository userRepository, IServicioRepository servicioRepository,IMapper mapper)
         {
             _localRepository = localRepository;
             _servicioRepository = servicioRepository;
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Servicio> AddService(AddServiceRequestDto dto, Guid localId)
+        public async Task<AddServicioResponseDto> AddService(AddServicioRequestDto dto, Guid localId)
         {
-            if (dto == null)
-            {
-                throw new ArgumentNullException("No se pudo crear el servico", nameof(dto));
-            }
+            if (dto == null) throw new ArgumentException("No se pudo crear el servico");
+
             // Verificar si el usuario tiene permisos para crear un servicio en el local
+
             Usuario searchUser = await _userRepository.GetUsuarioByIdAsync(dto.UsuarioId);
-            if (searchUser == null) { 
-                throw new ArgumentException("El usuario no existe", nameof(dto.UsuarioId)); 
-            }
-
-            if (searchUser.Rol == "Admin" || searchUser.Rol == "Cliente")
-            {
-                throw new UnauthorizedAccessException("El usuario no tiene permisos para crear un servicio");
-            }
-
+            if (searchUser == null) throw new KeyNotFoundException("El usuario no existe"); 
+            
+            if (searchUser.Rol == "Admin" || searchUser.Rol == "Cliente") throw new UnauthorizedAccessException("El usuario no tiene permisos para crear un servicio");
+           
             // Verificar si el usuario tiene un local asociado
             bool userIsOwner = await _localRepository.IsLocalOwnerAsync(localId, dto.UsuarioId);
-            if (!userIsOwner)
-            {
-                throw new InvalidOperationException("El usuario no tiene un local asociado");
-            }
-
+            if (!userIsOwner) throw new InvalidOperationException("El usuario no tiene un local asociado");
+         
             // Validar duplicado de servicio en el mismo local
             bool serviceExists = await _servicioRepository.ServiceExistsInLocalAsync(dto.Name, localId);
-            if (serviceExists)
-            {
-                throw new InvalidOperationException($"Ya existe un servicio llamado '{dto.Name}' en este local.");
-            }
-
-            // Crear el servicio
+            if (serviceExists) throw new InvalidOperationException($"Ya existe un servicio llamado '{dto.Name}' en este local.");
+         
             Servicio servicio = new Servicio
             {
                 Id = Guid.NewGuid(),
@@ -63,8 +52,14 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
                 Price = dto.Price,
                 LocalId = localId
             };
-            servicio = await _servicioRepository.AddServicio(servicio);
-            return servicio;
+
+            await _servicioRepository.Add(servicio);
+
+            var responseDto = _mapper.Map<AddServicioResponseDto>(servicio);
+            responseDto.UsuarioId = dto.UsuarioId;
+            responseDto.Message = "Servicio creado exitosamente.";
+
+            return responseDto;
         }
     }
 }
