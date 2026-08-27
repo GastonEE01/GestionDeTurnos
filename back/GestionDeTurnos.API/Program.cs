@@ -60,16 +60,15 @@ builder.Services.AddScoped<GetTurnosSlotUseCase>();
 
 
 
-// // 🔌 Le enseñamos a .NET cómo construir el IMapper usando tu clase de mapeo
+// AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(GestionDeTurnos.Application.Mapper.MapperLocal));
 
 // Configuracion de la Base de Datos (PostgreSQL con Neon)
-var connectionString = Environment.GetEnvironmentVariable("NeonTech__connectionString");
+var connectionString = builder.Configuration.GetConnectionString("NeonTech")
+                    ?? builder.Configuration["NeonTech:connectionString"]
+                    ?? builder.Configuration["NeonTech__connectionString"]
+                    ?? Environment.GetEnvironmentVariable("NeonTech__connectionString");
 
-if (string.IsNullOrEmpty(connectionString))
-{
-    connectionString = builder.Configuration.GetSection("NeonTech:connectionString").Value;
-}
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("No se encontró la cadena de conexión 'NeonTech' en ningún entorno.");
@@ -118,17 +117,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "TuEmisorGenérico",      // Después lo pasamos al appsettings.json
-            ValidAudience = "TuAudienciaGenérica",  // Después lo pasamos al appsettings.json
+            ValidIssuer = "TuEmisorGenérico",      
+            ValidAudience = "TuAudienciaGenérica",  
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("UnaClaveSuperSecretaYMuyLargaDeMasDe32Caracteres!"))
         };
     });
 
 // Telemetría de Application Insights
-builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
+var appInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+if (!string.IsNullOrEmpty(appInsightsConnectionString))
 {
-    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-});
+    builder.Services.AddApplicationInsightsTelemetry(options =>
+    {
+        options.ConnectionString = appInsightsConnectionString;
+    });
+}
 
 // Configuracion de CORS
 builder.Services.AddCors(options =>
