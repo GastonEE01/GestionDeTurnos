@@ -23,11 +23,15 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Restore dependencies
+        run: dotnet restore ./GestionDeTurno/back
+
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ./GestionDeTurno/back --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ./GestionDeTurno/back -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4

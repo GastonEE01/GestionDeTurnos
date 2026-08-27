@@ -118,7 +118,7 @@ namespace GestionDeTurnos.Test.UseCaseTest.Turnos
             // Ejecutar 
             // Usuario cancela turno
             //var result2 =  _useCase2.CancelTurno(TurnoId, UsuarioId);
-            _turnoRepositoryMock.Verify(r => r.DeleteTurno(It.IsAny<Turno>()), Times.Once);
+            _turnoRepositoryMock.Verify(r => r.Delete(It.IsAny<Turno>()), Times.Once);
 
 
         }
