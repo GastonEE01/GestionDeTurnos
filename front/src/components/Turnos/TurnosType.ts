@@ -11,3 +11,7 @@ export interface TurnosType{
 export interface TurnosProps {
   onAgregarServicio?: (turno: TurnosType) => void;
 }
+
+export interface TurnosTableProps{
+  idUsuario: string;
+}

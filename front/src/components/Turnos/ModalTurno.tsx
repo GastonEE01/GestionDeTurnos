@@ -1,7 +1,7 @@
 // import React from 'react'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ServicioType } from '../../interface/ServicioType.ts';
-import {addTurno} from '../../service/api.ts'
+import {addTurno, getHorarioAtencionDisponible} from '../../service/api.ts'
 
 interface ModalTurnoProps{
     cerrar: () => void;
@@ -11,143 +11,94 @@ interface ModalTurnoProps{
 }
 export const ModalTurno = ({cerrar, usuarioId,localId, servicios} : ModalTurnoProps) => {   
         const [loading,setLoading] = useState(false);
-
-        //const [turno,setTurno] = useState<TurnosProps[]>([]);
-        /* const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
-    setLoading(true);
+        const [fechaSeleccionada,setFechaSeleccionada] = useState<string>("");
+        const [turnosDisponibles,setTurnosDisponibles] = useState<string[]>([]);
+        const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState<string>("");
         
-        // 1 Leemos los datos del formulario
-        const formData = new FormData(e.currentTarget);
-        const nameTurno = formData.get('turno') as string;
-        const selectedDate = formData.get('fecha') as string;
+      useEffect(() => {
+        if(!localId || !servicioSeleccionadoId || !fechaSeleccionada) return;
 
-        // 2 Construimos el objeto respetando la estructura de TurnosType
-        // Nota: Le mandamos los datos minimos que necestia el Backend.
-        // Convertimos la fecha a un numero timestamp o string segun pida tu backend.
-        const turno = {
-          name: nameTurno,
-          date : selectedDate, // Convierte la fecha a número si tu tipo dice 'number'
-          servicioId: 1, // reemplazar por el id de servicio correspondiente
-          locales: [{id:localId}] // se suele enviar vacio al crear o mapear segun el backend 
-        };
-             
-        // 3 Hacemos la peticion
-        try{
-          await addTurno(turno);
-          alert("Turno guardado con exito");
-          cerrar();
-        } catch (error) {
-          console.error("Error al guardar el turno: ", error);
-          alert("No se pude guardar el turno.");
-        } finally {
-          setLoading(false);
-        }
-      };*/
-
-      //  AGREGAMOS 'async' AQUÍ:
-      //  AGREGAMOS 'async' AQUÍ:
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
-    setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const selectedDate = formData.get('fecha') as string;
-    const selectedServicioId = String(formData.get('servicio'));
-
-    const turno = {
-      date: selectedDate, 
-      servicioId: selectedServicioId, 
-      localId: localId,
-      usuarioId: usuarioId
+        const fetchTurnos = async() => {
+          setLoading(true);
+          try{
+            const data = await getHorarioAtencionDisponible(
+              localId,
+              servicioSeleccionadoId,
+              fechaSeleccionada
+            );
+            setTurnosDisponibles(data);
+          }catch (error) {
+        console.error("Error al obtener turnos:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-         
-    // En ModalTurno.tsx dentro de handleSubmit
-try {
-  const respuesta = await addTurno(turno);
-  
-  // respuesta ahora contiene { id, date, message } enviado por tu return Ok() de C#
-  alert(respuesta.message || "¡Turno guardado con éxito!"); 
-  cerrar();
-} catch (error) {
-  console.error("Error al guardar el turno: ", error);
-  alert("No se pudo guardar el turno.");
-}
-    /*try {
-      // Ahora sí, el await está permitido porque su función contenedora es async
-      await addTurno(turno);
-      alert("Turno guardado con éxito");
-      cerrar();
-    } catch (error) {
-      console.error("Error al guardar el turno: ", error);
-      alert("No se pudo guardar el turno.");
-    } finally {
-      setLoading(false);
-    }*/
-};
-/*const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault(); 
-    setLoading(true);
+    fetchTurnos();
+  }, [localId, servicioSeleccionadoId, fechaSeleccionada]);
+      
+  const handleConfirmarReserva = async (horaSeleccionada: string) => {
+    const confirmacion = window.confirm(
+      `¿Confirmar turno para el día ${fechaSeleccionada} a las ${horaSeleccionada} hs?`
+    );
+    if (!confirmacion) return;
 
-    const formData = new FormData(e.currentTarget);
-    const nameTurno = formData.get('turno') as string;
-    const selectedDate = formData.get('fecha') as string;
-
-    const turno = {
-      name: nameTurno,
-      date: selectedDate, 
-      servicioId: 1, 
-      locales: [{ id: localId }] 
-    };
-         
     try {
-      // Ahora sí, el await está permitido porque su función contenedora es async
-      await addTurno(turno);
-      alert("Turno guardado con éxito");
-      cerrar();
-    } catch (error) {
-      console.error("Error al guardar el turno: ", error);
-      alert("No se pudo guardar el turno.");
-    } finally {
-      setLoading(false);
+      // Unimos la fecha y la hora elegida (ejemplo: "2026-08-28T09:30:00")
+      const horaFormateada = horaSeleccionada.length === 5 ? `${horaSeleccionada}:00` : horaSeleccionada;
+      const fechaHoraInicio = `${fechaSeleccionada}T${horaFormateada}Z`;
+      // Llamamos a la API para crear la reserva
+      await addTurno({
+        usuarioId: usuarioId,                  // En lugar de clienteId
+        localId: localId,
+        servicioId: servicioSeleccionadoId,
+        date: fechaHoraInicio                  
+        });
+
+      alert("¡Turno reservado con éxito!");
+      cerrar(); // Cerramos el modal
+    } catch (error: any) {
+      alert(error.message || "No se pudo confirmar la reserva.");
     }
-};*/
-  return (
-    <div>
-        <form onSubmit={handleSubmit}>
-        <button type="button" onClick={cerrar}>X</button>
-        <label htmlFor="">Seleccione el servicio:</label>
-        <select name="servicio" required>
-          <option value="">Elija un servicio</option>
-          {servicios.map((s) => (
-            <option key={s.id} value={s.id}>
-            {s.name}
-            </option>
-          ))}
-        </select>
-        <label >Fecha del turno:</label>
-      <input type="date" name="fecha" required/>
-      <button type="submit" disabled={loading}>{loading ? 'Enviando...' : 'Enviar'}</button>
-</form>
+  };
+   
+return (
+    <div className="modal">
+      <h2>Reservar Turno</h2>
+      
+      {/* 1° Elige Servicio */}
+      <select onChange={(e) => setServicioSeleccionadoId(e.target.value)}>
+        <option value="">-- Seleccioná un servicio --</option>
+        {servicios.map((s) => (
+          <option key={s.id} value={s.id}>{s.name}</option>
+        ))}
+      </select>
+
+      {/* 2° Elige Fecha */}
+      <input 
+        type="date" 
+        value={fechaSeleccionada}
+        onChange={(e) => setFechaSeleccionada(e.target.value)} 
+      />
+
+     {/* 3° Lista de Horarios */}
+      {loading && <p>Cargando horarios libres...</p>}
+      
+      <div className="horarios-grid">
+        {!loading && turnosDisponibles.length > 0 && (
+          turnosDisponibles.map((hora) => (
+            <button key={hora} onClick={() => handleConfirmarReserva(hora)}>
+              {hora} hs
+            </button>
+          ))
+        )}
+
+        {!loading && fechaSeleccionada && servicioSeleccionadoId && turnosDisponibles.length === 0 && (
+          <p>No hay turnos disponibles para esta fecha.</p>
+        )}
+      </div>
+
+      <button onClick={cerrar}>Cancelar</button>
     </div>
-  )
+  );
+};
 
-}
-
-/*
-  TurnosType turno = () => {
-             name = nombreTurno,
-             date = fecha,
-             locales = LocalesTableProps.id
-          }
-          const loading = async () => (
-            try{
-                     const data = await addTurno(turno);
-                     setTurno(data);
-                   } catch (error){
-                     console.error("Error al traer locales: ", error);
-                   }
-                 }
-                
-               },[])
-               */

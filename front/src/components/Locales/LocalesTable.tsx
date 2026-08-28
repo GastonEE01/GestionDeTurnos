@@ -1,14 +1,15 @@
-import React, {  useState } from 'react'
+import React, {  useState ,useEffect} from 'react'
 import {ModalTurno} from '../Turnos/ModalTurno.tsx'
 import { ModalLocal } from './ModalLocal.tsx';
 import {ModalService} from '../Servicio/ModalService.tsx'
 // interface
 import type {LocalesTableProps, LocalesType} from '../../interface/LocalesType.ts'
-import { DayOfWeek } from '../../interface/HorarioAtencionType.ts';
+import { DayOfWeek, type HorarioAtencionType } from '../../interface/HorarioAtencionType.ts';
 import { deletedLocal } from '../../service/api.ts';
 
 export const LocalesTable: React.FC<LocalesTableProps> = ({data,user,onDeleteSuccess }) => {
   const [selectedLocal, setSelectedLocal] = useState<LocalesType | null>(null);
+  const [horarios, setHorarios] = useState<HorarioAtencionType[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenService, setIsModalOpenService] = useState(false);
@@ -52,6 +53,8 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,user,onDeleteSuc
     setSelectedLocal(null);
   };
 
+
+
   if(user.rol === "Cliente")
   return (
     <div>
@@ -66,6 +69,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,user,onDeleteSuc
             <th>Telefono</th>
             <th>Servicios</th>
             <th>Horarios de Atencion</th>
+            <th>Horarios disponibles</th>
             <th>Acciones</th>
             </tr>
            
@@ -87,6 +91,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({data,user,onDeleteSuc
                 ? local.horariosAtencion.map(h => 
         `${h.estaCerrado ? 'Cerrado' : 'Abierto'}: ${DayOfWeek[Number(h.diaSemana) as keyof typeof DayOfWeek]}: ${h.horaApertura.substring(0, 5)} - ${h.horaCierre.substring(0, 5)}`
       ).join(", ") : "Sin horarios"}</td>
+            
             <td>
               <button onClick={() => setSelectedLocal(local)}>Pedir turno</button> 
             </td>

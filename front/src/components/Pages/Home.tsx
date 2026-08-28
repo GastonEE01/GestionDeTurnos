@@ -8,6 +8,7 @@ import  { useEffect, useState } from 'react'
 import { LocalesTable } from '../Locales/LocalesTable'
 import { Filter } from '../UIX/Filter';
 import { SearchText } from '../UIX/SearchText.tsx';
+import { TurnosTable } from '../Turnos/TurnosTable.tsx'
 // interface
 import type { LocalesType } from '../../interface/LocalesType'
 //import type {LoginResponse} from '../../interface/LoginType.ts'
@@ -110,6 +111,8 @@ export const Home = () => {
       {/* Vista cliente */}
       {user.rol === "Cliente" && (
         <div style={{ marginTop: "20px" }}>
+          <h2>Mis Turnos Reservados</h2>
+          <TurnosTable idUsuario={user.id} />
           <h2>Catálogo de Locales</h2>
           <SearchText value={searchText} onChange={(e) => setSearchText(e.target.value)} />
           <Filter value={filterCategoria} onChange={(e) => setFilterCategoria(e.target.value)} />

@@ -24,9 +24,10 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTurno(AddTurnoRequestDto dto)
+        public async Task<IActionResult> AddTurno([FromBody] AddTurnoRequestDto dto)
         {
-                var response = await _addTurnoUseCase.AddTurno(dto);
+            dto.Date = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc);
+            var response = await _addTurnoUseCase.AddTurno(dto);
                 return Ok(response);
         }
 
@@ -45,7 +46,7 @@ namespace GestionDeTurnos.API.Controllers
         }
 
         [HttpGet("Disponibles")]
-        public async Task<IActionResult> GetTurnosSlot(Guid localId,Guid servicioId, DateTime fecha)
+        public async Task<IActionResult> GetTurnosSlot([FromQuery] Guid localId, [FromQuery] Guid servicioId, [FromQuery] DateTime fecha)
         {
             List<TimeSpan> turnosSlot = await _getTurnosSlotUseCase.GetTurnos(localId,servicioId,fecha);
             return Ok(turnosSlot);  
