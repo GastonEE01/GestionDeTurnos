@@ -22,7 +22,7 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
             Servicio searchService = await _servicioRepository.GetServiceById(serviceId);
             if (searchService == null) throw new ArgumentException("No se encontro el servicio para eliminar");
    
-            _servicioRepository.Delete(searchService);
+            await _servicioRepository.Delete(searchService);
         }
     }
 }

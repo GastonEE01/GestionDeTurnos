@@ -12,8 +12,8 @@ namespace GestionDeTurnos.Application.DTOs.HorarioAtencion
         public DayOfWeek DiaSemana { get; set; }
 
         // Usamos TimeSpan para guardar solo la hora del día (sin fecha)
-        public TimeSpan HoraApertura { get; set; } // Ejemplo: 08:00:00 || 17:00:00
-        public TimeSpan HoraCierre { get; set; }   
+        public string HoraApertura { get; set; } = string.Empty;// Ejemplo: 08:00:00 || 17:00:00
+        public string HoraCierre { get; set; } = string.Empty;
         public bool EstaCerrado { get; set; } 
     }
 }

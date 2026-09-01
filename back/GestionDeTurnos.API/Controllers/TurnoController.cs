@@ -35,7 +35,7 @@ namespace GestionDeTurnos.API.Controllers
         public async Task<IActionResult> CancelTurno(Guid turnoId, Guid usuarioId) 
         {                
             await _cancelTurnoUseCase.CancelTurno(turnoId, usuarioId);
-            return Ok();    
+            return Ok(new { message = "Turno cancelado" });    
         }
 
         [HttpGet("usuario/{usuarioId}")]

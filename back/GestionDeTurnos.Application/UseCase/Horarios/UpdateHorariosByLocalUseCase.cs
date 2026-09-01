@@ -40,18 +40,21 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
 
             if(searchHorario == null) throw new KeyNotFoundException("No se encontraron horarios para el local especificado.");
 
-
+            
             // Actualizar los horarios existentes
             foreach (var horarioDto in horarios)
             {
-                if (horarioDto.HoraApertura > horarioDto.HoraCierre) throw new ArgumentException("La hora de apertura no puede ser mayor que la de cierre.");
+                TimeSpan.TryParse(horarioDto.HoraApertura, out var apertura);
+                TimeSpan.TryParse(horarioDto.HoraCierre, out var cierre);
+
+                if (apertura > cierre) throw new ArgumentException("La hora de apertura no puede ser mayor que la de cierre.");
 
                 HorarioAtencion existingHorario = searchHorario.FirstOrDefault(h => h.DiaSemana == horarioDto.DiaSemana); 
 
                 if (existingHorario != null)
                     {
-                        existingHorario.HoraApertura = horarioDto.HoraApertura;
-                        existingHorario.HoraCierre = horarioDto.HoraCierre;
+                        existingHorario.HoraApertura = apertura;
+                        existingHorario.HoraCierre = cierre;
                         existingHorario.EstaCerrado = horarioDto.EstaCerrado;
                     }
                     else
@@ -62,8 +65,8 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
                         Id = Guid.NewGuid(),
                         LocalId = localId,
                         DiaSemana = horarioDto.DiaSemana,
-                        HoraApertura = horarioDto.HoraApertura,
-                        HoraCierre = horarioDto.HoraCierre,
+                        HoraApertura = apertura,
+                        HoraCierre = cierre,
                         EstaCerrado = horarioDto.EstaCerrado
                     };
                     await _horarioAtencionRepository.Add(newHorario);

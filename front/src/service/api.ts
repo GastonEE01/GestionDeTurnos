@@ -1,64 +1,81 @@
 // component
-import  {type TurnosType } from '../components/Turnos/TurnosType.ts'
-import  {type LoginType} from '../components/Pages/Login.tsx'
+import { type TurnosDtoRequest } from "../interface/TurnosType.ts";
+import { type TurnoDtoResponse } from "../interface/TurnosType.ts";
 
 // interface
-import  {type LocalesType} from '../interface/LocalesType.ts'
-import  {type UsuarioRegisterDto } from '../interface/UsuarioType.ts'
-import  {type HorarioAtencionType } from '../interface/HorarioAtencionType.ts'
-import { type LoginResponse } from '../interface/LoginType.ts'
-import { type ServicioType } from '../interface/ServicioType.ts'
+import { type LocalesType } from "../interface/LocalesType.ts";
+import { type UsuarioRegisterDto } from "../interface/UsuarioType.ts";
+import { type HorarioAtencionType } from "../interface/HorarioAtencionType.ts";
 
-import type {UpdateLocalDto} from '../interface/LocalesType.ts'
+import { type LoginDtoRequest } from "../interface/LoginType.ts";
+import { type LoginDtoResponse } from "../interface/LoginType.ts";
+
+//import { type ServicioType } from '../interface/ServicioType.ts'
+import { type ServicioDtoRequest } from "../interface/ServicioType.ts";
+import { type ServicioDtoResponse } from "../interface/ServicioType.ts";
+
+import type { UpdateLocalDto } from "../interface/LocalesType.ts";
 const API_URL = import.meta.env.VITE_API_URL;
 
+export interface ApiResponse<T = void> {
+  message: string;
+  data?: T;
+}
+
 // LOCAL
-export const getLocales = async (): Promise<LocalesType[]>  => {
-    const rest = await fetch(`${API_URL}/api/Local`,{
-        method: 'GET',
-        headers: {
-            'Content-type' : 'application/json',
-        },    
-    });
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+export const getLocales = async (): Promise<LocalesType[]> => {
+  const rest = await fetch(`${API_URL}/api/Local`, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al obtener los locales");
+  }
+  return rest.json();
 };
 
-export const deletedLocal = async (localId : string): Promise<LocalesType[]> => {
-  const rest = await fetch(`${API_URL}/api/Local/${localId}`,{
-    method: 'DELETE',
+export const deletedLocal = async (localId: string): Promise<ApiResponse> => {
+  const rest = await fetch(`${API_URL}/api/Local/${localId}`, {
+    method: "DELETE",
     headers: {
-            'Content-type' : 'application/json',
-        }, 
+      "Content-type": "application/json",
+    },
   });
-   if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al eliminar los locales');
-    }
-    return rest.json();
-}
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al eliminar los locales");
+  }
+  return rest.json();
+};
 
-export const updateLocal = async (localId: string,localData: UpdateLocalDto): Promise<LocalesType> => {
-  const rest = await fetch(`${API_URL}/api/Local/${localId}`,{
-        method: 'PUT',
-        headers: {
-            'Content-type' : 'application/json',
-        },   
-        body: JSON.stringify(localData), 
-    });
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al actualizar el local');
-    }
-    return rest.json();
-}
+export const updateLocal = async (
+  localId: string,
+  localData: UpdateLocalDto,
+): Promise<LocalesType & ApiResponse> => {
+  const rest = await fetch(`${API_URL}/api/Local/${localId}`, {
+    method: "PUT",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(localData),
+  });
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al actualizar el local");
+  }
+  return rest.json();
+};
 
-export const createLocal = async (localData: Omit<LocalesType, "id" | "servicios" | "horariosAtencion">,usuarioId: string,horarioData: HorarioAtencionType) => {
-  // Armamos el cuerpo según lo que espera C# en el POST /api/Local
-  const formatTime = (time: string) => (time.length === 5 ? `${time}:00` : time);
+export const createLocal = async (
+  localData: Omit<LocalesType, "id" | "servicios" | "horariosAtencion">,
+  usuarioId: string,
+  horarioData: HorarioAtencionType,
+) => {
+  const formatTime = (time: string) =>
+    time.length === 5 ? `${time}:00` : time;
   const payloadLocal = {
     local: {
       usuarioId: usuarioId,
@@ -66,7 +83,6 @@ export const createLocal = async (localData: Omit<LocalesType, "id" | "servicios
       description: localData.description,
       category: localData.category,
       imageURL: localData.imageURL,
-      //title: localData.title,
       direction: localData.direction,
       phone: localData.phone,
     },
@@ -77,80 +93,142 @@ export const createLocal = async (localData: Omit<LocalesType, "id" | "servicios
         horaCierre: formatTime(horarioData.horaCierre),
         estaCerrado: horarioData.estaCerrado ?? false,
       },
-    ], 
+    ],
   };
 
   const rest = await fetch(`${API_URL}/api/Local`, {
-    method: "POST", 
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payloadLocal), // 👈 Mandamos la estructura envuelta
+    body: JSON.stringify(payloadLocal),
   });
 
   if (!rest.ok) {
     const errorData = await rest.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al crear el local");
+    const message =
+      errorData.message ||
+      errorData.Message ||
+      errorData.detail ||
+      errorData.title ||
+      "Error al registrar el local";
   }
 
   return rest.json();
 };
 
-export const getLocalesByUser = async (usuarioId: string): Promise<LocalesType[]>  => {
-    const rest = await fetch(`${API_URL}/api/Local/usuario/${usuarioId}`,{
-        method: 'GET',
-        headers: {
-            'Content-type' : 'application/json',
-        },    
-    });
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+export const getLocalesByUser = async (
+  usuarioId: string,
+): Promise<LocalesType[]> => {
+  const rest = await fetch(`${API_URL}/api/Local/usuario/${usuarioId}`, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al obtener los locales");
+  }
+  return rest.json();
 };
 
 // TURNO
-export const addTurno = async (nuevoTurno: Omit<TurnosType, 'id'>): Promise<{ usuarioId: string; localId: string; servicioId: string; date: string;  }> => {   
-  const rest = await fetch(`${API_URL}/api/Turno`,{
-        method: 'POST',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-         body: JSON.stringify(nuevoTurno),
-        });
+export const addTurno = async (
+  nuevoTurno: Omit<TurnosDtoRequest, "id">,
+): Promise<TurnoDtoResponse & ApiResponse> => {
+  const rest = await fetch(`${API_URL}/api/Turno`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(nuevoTurno),
+  });
 
-    if(!rest.ok){
-        const errorData = await rest.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Error al agregar un turno ')
-    }
-    return rest.json();
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const errorMessage =
+      (typeof errorData === "string" ? errorData : null) ||
+      errorData?.message ||
+      errorData?.Message ||
+      "Error al cancelar el turno ";
+
+    throw new Error(errorData.message || "Error al agregar un turno ");
+  }
+
+  /*
+       if(!rest.ok){
+            const errorData = await rest.json().catch(() => ({}));
+          const errorMessage = 
+    (typeof errorData === 'string' ? errorData : null) ||
+    errorData?.message || 
+    errorData?.Message || 
+    'Error al eliminar un servicio';
+
+  throw new Error(errorMessage);
+}
+
+if (rest.status === 204) {
+    return { message: "Servicio eliminado exitosamente" } as ApiResponse;
+  }
+    */
+  return rest.json();
 };
 
+export const deleteTurno = async (
+  turnoId: string,
+  usuarioId: string,
+): Promise<ApiResponse> => {
+  const rest = await fetch(
+    `${API_URL}/api/Turno/${turnoId}/cancelar?usuarioId=${usuarioId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+      },
+    },
+  );
+
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const errorMessage =
+      errorData.message ||
+      errorData.title ||
+      errorData.detail ||
+      "Error al cancelar el turno";
+
+    throw new Error(errorMessage);
+  }
+
+  return rest.json();
+};
+
+// HORARIO ATENCION
 export const getHorarioAtencionDisponible = async (
   localId: string,
   servicioId: string,
-  fecha: string
+  fecha: string,
 ): Promise<string[]> => {
-  const fechaISO = fecha.includes('T') ? fecha : `${fecha}T00:00:00Z`;
-  
+  const fechaISO = fecha.includes("T") ? fecha : `${fecha}T00:00:00Z`;
+
   const rest = await fetch(
     `${API_URL}/api/Turno/Disponibles?localId=${localId}&servicioId=${servicioId}&fecha=${encodeURIComponent(fechaISO)}`,
-        {
-      method: 'GET',
+    {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-    }
+    },
   );
 
- if (!rest.ok) {
+  if (!rest.ok) {
     const errorData = await rest.json().catch(() => ({}));
-    // Muestra en la consola de JS la respuesta exacta de .NET
     console.error("Detalle del error 400 devuelto por C#:", errorData);
-    
-    // Extrae el mensaje específico de .NET si existe
-    const mensajeError = errorData.detail || errorData.title || errorData.message || 'Error al obtener los horarios de atención';
+    const mensajeError =
+      errorData.detail ||
+      errorData.title ||
+      errorData.message ||
+      "Error al obtener los horarios de atención";
     throw new Error(mensajeError);
   }
 
@@ -159,77 +237,35 @@ export const getHorarioAtencionDisponible = async (
 
 export const getHorarioAtencionUsuario = async (
   usuarioId: string,
-): Promise<TurnosType[]> => {
-  
-  const rest = await fetch(`${API_URL}/api/Turno/usuario/${usuarioId}`,
-      {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
- if (!rest.ok) {
-    const errorData = await rest.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Error al obtener los turnos');
-  }
-  const data = await rest.json();
-  // Accedemos directamente a la propiedad 'turnos' del JSON que devuelve Swagger
-  return Array.isArray(data.turnos) ? data.turnos : [];
-  
-};
-
-export const deleteTurno = async (turnoId: string, usuarioId: string) : Promise<ServicioType[]>  => {
-    const rest = await fetch(`${API_URL}/api/Turno/${turnoId}/cancelar?usuarioId=${usuarioId}`,{
-        method: 'DELETE',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-    });
-    console.log(rest);
-
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al cancelar el turno');
-    }
-    return rest.json();
-};
-
-
-// Registro 
-export const addUsuarioLocal = async (
-  userDto: UsuarioRegisterDto,
-  localDto: Omit<LocalesType, "id">,
-  horarioDto: HorarioAtencionType
-) => {
-  const userPayload = { ...userDto, rol: "Local" };
-  const resUser = await fetch(`${API_URL}/api/Registro`, {
-    method: "POST",
+): Promise<TurnoDtoResponse[]> => {
+  const rest = await fetch(`${API_URL}/api/Turno/usuario/${usuarioId}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(userPayload),
   });
 
-  if (!resUser.ok) {
-    const errorData = await resUser.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al registrar el usuario");
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al obtener los turnos");
   }
+  const data = await rest.json();
+  return Array.isArray(data.turnos) ? data.turnos : [];
+};
 
-  // Obtenemos el ID del usuario creado
-  const userData = await resUser.json();
-  const usuarioIdCreado = userData.id;
-
-  // 2. Armar el JSON del Local con ese usuarioId y los horarios
-  const payloadLocal = {
+// Registro
+export const addUsuarioLocal = async (
+  userDto: UsuarioRegisterDto,
+  localDto: Omit<LocalesType, "id">,
+  horarioDto: HorarioAtencionType,
+) => {
+  const payload = {
+    user: { ...userDto, rol: "Local" },
     local: {
-      usuarioId: usuarioIdCreado,
       name: localDto.name,
       description: localDto.description,
       category: localDto.category,
       imageURL: localDto.imageURL,
-      //title: localDto.title,
       direction: localDto.direction,
       phone: localDto.phone,
     },
@@ -249,100 +285,136 @@ export const addUsuarioLocal = async (
     ],
   };
 
-  // 3. Crear el Local en C#
-  const resLocal = await fetch(`${API_URL}/api/Local`, {
+  const res = await fetch(`${API_URL}/api/Registro/registro-local`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payloadLocal),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
   });
 
-  if (!resLocal.ok) {
-    const errorData = await resLocal.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al registrar el local");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+
+    const mensajeError =
+      errorData.Message ||
+      errorData.message ||
+      (errorData.errors
+        ? Object.values(errorData.errors).flat().join(", ")
+        : null) ||
+      "Error al registrar el local";
+
+    throw new Error(mensajeError);
   }
 
-  return resLocal.json();
+  return res.json();
 };
 
-export const addUsuario = async (credentials: UsuarioRegisterDto ) : Promise<{ message: string }> => {    
-    const rest = await fetch(`${API_URL}/api/Registro`,{
-        method: 'POST',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-        body: JSON.stringify(credentials),
-    });
-    console.log("credenciales" ,credentials)
-    if(!rest.ok){
-        const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al registrarse');
-    }
-    return rest.json();
-}
-
-// LOGIN    
-export const loginUser = async (credentials: LoginType) : Promise<Promise<{ token: string,response: LoginResponse }>>  => {
-    const rest = await fetch(`${API_URL}/api/JWTService/Login`,{
-        method: 'POST',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-        body: JSON.stringify(credentials), 
-    });
-    console.log(rest);
-
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+export const addUsuario = async (
+  credentials: UsuarioRegisterDto,
+): Promise<{ message: string }> => {
+  const rest = await fetch(`${API_URL}/api/Registro`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+  console.log("credenciales", credentials);
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const messageError =
+      errorData.Message || errorData.message || "Error al registro";
+    throw new Error(messageError);
+  }
+  return rest.json();
 };
 
+// LOGIN
+export const loginUser = async (
+  credentials: LoginDtoRequest,
+): Promise<LoginDtoResponse> => {
+  const rest = await fetch(`${API_URL}/api/JWTService/Login`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+  console.log(rest);
+
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const errorMessage =
+      (typeof errorData === "string" ? errorData : null) ||
+      errorData?.message ||
+      errorData?.Message ||
+      "Error al iniciar sesión";
+
+    throw new Error(errorMessage);
+  }
+
+  return rest.json();
+};
 
 // SERVICIO
-export const getServiceLocal = async (localId: string) : Promise<ServicioType[]>  => {
-    const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios`,{
-        method: 'GET',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-    });
-    console.log(rest);
-
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+export const getServiceLocal = async (
+  localId: string,
+): Promise<ServicioDtoResponse[]> => {
+  const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios`, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al obtener los locales");
+  }
+  return rest.json();
 };
 
-export const deleteService = async (localId: string, servicioId: string) : Promise<ServicioType[]>  => {
-    const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios/${servicioId}`,{
-        method: 'DELETE',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-    });
-    console.log(rest);
+export const deleteService = async (
+  localId: string,
+  servicioId: string,
+): Promise<ApiResponse> => {
+  const rest = await fetch(
+    `${API_URL}/api/Servicio/${localId}/servicios/${servicioId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+      },
+    },
+  );
+  console.log(rest);
 
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const errorMessage =
+      (typeof errorData === "string" ? errorData : null) ||
+      errorData?.message ||
+      errorData?.Message ||
+      "Error al eliminar un servicio";
+
+    throw new Error(errorMessage);
+  }
+
+  if (rest.status === 204) {
+    return { message: "Servicio eliminado exitosamente" } as ApiResponse;
+  }
+
+  return rest.json();
 };
 
-
-export const updateService = async (localId: string, servicioId: string, servicioData: {
+export const updateService = async (
+  localId: string,
+  servicioId: string,
+  servicioData: {
     name: string;
     description: string;
     durationInMinutes: string | number;
     price: number;
-  }) : Promise<ServicioType[]>  => {
-
-    // 1. Armamos el objeto asegurando que los tipos numéricos sean correctos
+  },
+): Promise<ServicioDtoRequest[]> => {
   const payload: ServicioDto = {
     name: servicioData.name,
     description: servicioData.description,
@@ -350,55 +422,44 @@ export const updateService = async (localId: string, servicioId: string, servici
     price: Number(servicioData.price),
   };
 
-    const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios/${servicioId}`,{
-        method: 'PUT',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-        body: JSON.stringify(payload),
-    });
-    console.log(rest);
+  const rest = await fetch(
+    `${API_URL}/api/Servicio/${localId}/servicios/${servicioId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  console.log(rest);
 
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los locales');
-    }
-    return rest.json();
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al obtener los locales");
+  }
+  return rest.json();
 };
 
-export const addService = async (localId: string, servicioData: CreateServicioDto ) : Promise<ServicioType> => {    
-    const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios`,{
-        method: 'POST',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-        body: JSON.stringify(servicioData)
-    });
-    if(!rest.ok){
-        const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al registrarse');
-    }
-    return rest.json();
-}
-
-// HORARIO ATENCION no lo debo usar 
-/*export const getHorarioAtencionDisponible = async (localId: string,servicioId: string,fecha: string) : Promise<string[]>  => {
-    const rest = await fetch(`${API_URL}/api/Turno/Disponibles/${localId}${servicioId}${fecha}`,{
-        method: 'GET',
-        headers: {
-            'Content-type' : 'application/json',
-        },
-    });
-    console.log(rest);
-
-    if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Error al obtener los horarios de atencion');
-    }
-    return rest.json();
-};*/
-
-
+export const addService = async (
+  localId: string,
+  servicioData: ServicioDtoRequest,
+): Promise<ServicioDtoResponse & ApiResponse> => {
+  const rest = await fetch(`${API_URL}/api/Servicio/${localId}/servicios`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(servicioData),
+  });
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    const messageError =
+      errorData.Message || errorData.message || "Error al registro";
+    throw new Error(messageError);
+  }
+  return rest.json();
+};
 
 export interface ServicioDto {
   name: string;
@@ -406,13 +467,3 @@ export interface ServicioDto {
   durationInMinutes: number;
   price: number;
 }
-
-
-export interface CreateServicioDto {
-  usuarioId: string;
-  name: string;
-  description: string;
-  durationInMinutes: number;
-  price: number;
-}
-

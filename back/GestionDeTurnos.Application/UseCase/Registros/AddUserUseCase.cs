@@ -25,9 +25,15 @@ namespace GestionDeTurnos.Application.UseCase.Registros
         public async Task<UserResponseDto> AddUser(UserRequestDto dto)
         {
             // validar datos
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                throw new ArgumentException("El nombre es obligatorio.");
+
             if (dto == null) throw new ArgumentException("No se pude registrar ");
 
             // validar  el gmail
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new ArgumentException("El email es obligatorio.");
+
             if (string.IsNullOrWhiteSpace(dto.Email) || !dto.Email.Contains("@") || !dto.Email.EndsWith("gmail.com"))
                 throw new ArgumentException("El email debe ser una dirección válida de Gmail (debe contener '@' y terminar en 'gmail.com').");
 
@@ -38,6 +44,9 @@ namespace GestionDeTurnos.Application.UseCase.Registros
             bool containMayus = dto.Password.Any(Char.IsUpper);
             bool containMinus = dto.Password.Any(Char.IsLower);
             bool containNumber = dto.Password.Any(Char.IsDigit);
+
+            if (string.IsNullOrWhiteSpace(dto.Password))
+                throw new ArgumentException("La contraseña es obligatoria.");
 
             if (dto.Password.Length <= 5 || !containMayus || !containMinus || !containNumber)
                 throw new ArgumentException("La contraseña debe tener 6 o mas caracteres y contener una letra mayuscula,una minuscula y un numero");

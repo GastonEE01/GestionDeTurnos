@@ -1,32 +1,23 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { addUsuario } from "../../service/api";
 import type { UsuarioRegisterDto } from "../../interface/UsuarioType";
-// 1) Definimos el molde del objeto
+import toast from "react-hot-toast";
 
-
-// Como es una página que carga sola, no requiere Props externas
-
-// 3) Inyectar en el componente
 export const RegisterClient: React.FC = () => {
-  // Estado solo para mostrar el mensaje de existo o error
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  // capturamos los datos del formulario
-  //const formData = new FormData(e.currentTarget);
-  // const selectedRol = String(formData.get('rol'));
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
+    setFormError(null);
 
-    // 3) Capturamos los datos del formulario de manera nativa
     const formData = new FormData(e.currentTarget);
 
-    // 4) Armamos el objeto EXACTAMENTE como lo espera tu backend en C#
     const user: UsuarioRegisterDto = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -35,7 +26,6 @@ export const RegisterClient: React.FC = () => {
       rol: "Cliente",
     };
 
-    // Validación express antes de ir al back
     if (user.password !== user.confirmPassword) {
       setMessage("❌ Las contraseñas no coinciden");
       setLoading(false);
@@ -43,52 +33,47 @@ export const RegisterClient: React.FC = () => {
     }
 
     try {
-      await addUsuario(user);
-      setMessage("¡Registro exitoso! Ya podés iniciar sesión.");
-      formRef.current?.reset(); // Limpia el formulario
-    } catch (error) {
-      console.error("No se pudo registrar al usuario: ", error);
-      setMessage("❌ Hubo un error al registrar el usuario.");
+      const res = await addUsuario(user);
+      setMessage(res.message);
+      toast.success(res.message);
+
+      formRef.current?.reset(); 
+    } catch (error: any) {
+      setFormError(error.message);
     } finally {
       setLoading(false);
     }
   };
-  /*
-     const handleChange = (e) => {
-            const {name, value} = e.target;
-            const {gmail, value} = e.target;
-            const {password, value} = e.target;
-            const {rol, value} = e.target;
 
-            setFormData(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        };*/
+  return (
+    <div>
+      <h1>Registro como cliente</h1>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="">Ingrese el nombre</label>
+        <input name="name" type="text" />
 
- 
-    return (
-      <div>
-        <h1>Registro como cliente</h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="">Ingrese el nombre</label>
-          <input name="name" type="text" />
+        <label htmlFor="">Ingrese el gmail</label>
+        <input name="email" type="text" />
 
-          <label htmlFor="">Ingrese el gmail</label>
-          <input name="email" type="text" />
+        <label htmlFor="">Ingrese la contraseña</label>
+        <input name="password" type="password" />
 
-          <label htmlFor="">Ingrese la contraseña</label>
-          <input name="password" type="password" />
+        <label htmlFor="">Confirme la contraseña</label>
+        <input name="confirmPassword" type="password" />
 
-          <label htmlFor="">Confirme la contraseña</label>
-          <input name="confirmPassword" type="password" />
-
-          <button type="submit"  disabled={loading}>Enviar</button>
-        </form>
-        <h2>
-          Ya tenes una cuenta?<Link to="/iniciar-sesion">Logueate</Link>
-        </h2>
-        {message && <h2>{message}</h2>}
-      </div>
-    );
-  }
+        <button type="submit" disabled={loading}>
+          Enviar
+        </button>
+      </form>
+      {formError && (
+        <div style={{ color: "red", marginTop: "15px", fontWeight: "bold" }}>
+          ❌ {formError}
+        </div>
+      )}
+      <h2>
+        Ya tenes una cuenta?<Link to="/iniciar-sesion">Logueate</Link>
+      </h2>
+      {message && <h2>{message}</h2>}
+    </div>
+  );
+};

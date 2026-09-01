@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using GestionDeTurnos.Application.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -11,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace GestionDeTurnos.Infrastructure.Services
 {
-    public class JWTService
-    {
+    public class JWTService : IJwtTokenGenerator
+    { 
 
        public string GenerateToken(string usuarioId,string email,string rol)
         {

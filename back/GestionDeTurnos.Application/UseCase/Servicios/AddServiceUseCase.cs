@@ -28,6 +28,18 @@ namespace GestionDeTurnos.Application.UseCase.Servicios
         {
             if (dto == null) throw new ArgumentException("No se pudo crear el servico");
 
+            if (string.IsNullOrEmpty(dto.Name))
+                throw new ArgumentException("El nombre del servicio es obligatorio.");
+
+            if (string.IsNullOrEmpty(dto.Description))
+                throw new ArgumentException("La descripcion del servicio es obligatorio.");
+
+            if (dto.DurationInMinutes == 0)
+                throw new ArgumentException("La duracion del servicio no puede ser cero.");
+
+            if (dto.Price == 0)
+                throw new ArgumentException("El precio del servicio no puede ser cero.");
+
             // Verificar si el usuario tiene permisos para crear un servicio en el local
 
             Usuario searchUser = await _userRepository.GetUsuarioByIdAsync(dto.UsuarioId);

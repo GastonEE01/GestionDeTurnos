@@ -30,6 +30,7 @@ builder.Services.AddScoped<ITurnoRespository, TurnoRepository>();
 builder.Services.AddScoped<IUserRepository, UsuarioRepository>();
 builder.Services.AddScoped<IHorarioAtencionRepository, HorarioAtencionRepository>();
 builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
+builder.Services.AddScoped<IJwtTokenGenerator, JWTService>();
 
 // Servicios
 builder.Services.AddScoped<JWTService>();
@@ -44,6 +45,7 @@ builder.Services.AddScoped<UpdateLocalUseCase>();
 
 builder.Services.AddScoped<AddUserUseCase>();
 builder.Services.AddScoped<GetUserUseCase>();
+builder.Services.AddScoped<UserLoginUseCase>();
 
 builder.Services.AddScoped<AddServiceUseCase>();
 builder.Services.AddScoped<UpdateServiceUseCase>();
