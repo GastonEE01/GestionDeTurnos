@@ -72,7 +72,7 @@ export const updateLocal = async (
 export const createLocal = async (
   localData: Omit<LocalesType, "id" | "servicios" | "horariosAtencion">,
   usuarioId: string,
-  horarioData: HorarioAtencionType,
+  horarioData: Omit<HorarioAtencionType, "localId">,
 ) => {
   const formatTime = (time: string) =>
     time.length === 5 ? `${time}:00` : time;

@@ -42,6 +42,7 @@ export const ModalLocal = ({
           imageURL: formData.get("imageURL") as string,
           direction: formData.get("direction") as string,
           phone: formData.get("phone") as string,
+
         };
         const response = await updateLocal(localToEdit.id, updateDto);
         toast.success(response.message);
@@ -57,8 +58,7 @@ export const ModalLocal = ({
           horariosAtencion: [],
         };
 
-        const addHorario: HorarioAtencionType = {
-          localId: "",
+        const addHorario: Omit<HorarioAtencionType, "localId"> = {
           diaSemana: Number(
             formData.get("diaSemana"),
           ) as keyof typeof DayOfWeek,
