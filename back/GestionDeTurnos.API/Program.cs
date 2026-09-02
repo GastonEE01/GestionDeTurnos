@@ -141,8 +141,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "http://localhost:5173",                  // Tu React en tu PC
-                "https://app-peliculas-three.vercel.app"   // Tu React publicado en Vercel
+                "http://localhost:5173",
+                "https://gestion-de-turnos-zeta.vercel.app"
               )
               .AllowAnyHeader()
               .AllowAnyMethod();
