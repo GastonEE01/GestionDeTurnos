@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import { X, Plus, Trash2, Edit2, Check, Clock } from "lucide-react";
 import type { LocalesType } from "../../interface/LocalesType.ts";
-import type { ServicioDtoRequest } from "../../interface/ServicioType.ts";
-import type { ServicioDtoResponse } from "../../interface/ServicioType.ts";
+import type { ServicioDtoRequest,ServicioDtoResponse} from "../../interface/ServicioType.ts";
 import {
   getServiceLocal,
   deleteService,
@@ -14,18 +14,20 @@ export interface ModalServiceProps {
   cerrar: () => void;
   usuarioId: string;
   local: LocalesType;
+  onSuccess?: () => void; 
 }
 
 export const ModalService: React.FC<ModalServiceProps> = ({
   cerrar,
   local,
   usuarioId,
+  onSuccess,
 }) => {
   const [servicios, setServicios] = useState<ServicioDtoResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const [modalAddService, setModalAddSercice] = useState<boolean>(false);
+  const [modalAddService, setModalAddService] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -124,168 +126,263 @@ export const ModalService: React.FC<ModalServiceProps> = ({
       const response = await addService(local.id, createServiceData);
       setServicios((prevServicios) => [...prevServicios, response]);
       toast.success(response.message);
-      setModalAddSercice(false);
+      setModalAddService(false);
       formRef.current?.reset();
-    } catch (error: any) {
-      toast.error(error.message);
+      if (onSuccess) onSuccess();
+    } catch (error: unknown) {
+      const errorObject = error as Error;
+      toast.error(errorObject.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal">
-      <h2>Servicios de {local.name}</h2>
-      <button type="button" onClick={cerrar}>
-        X
-      </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 relative border border-gray-100 my-8">
+        
+        {/* Header */}
+        <div className="flex justify-between items-start mb-5">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-900">
+              GESTIÓN DE SERVICIOS
+            </span>
+            <h2 className="text-2xl font-black text-gray-900 leading-tight">
+              Servicios de {local.name}
+            </h2>
+          </div>
+          <button
+            onClick={cerrar}
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-      <button
-        type="button"
-        onClick={() => setModalAddSercice(!modalAddService)}
-      >
-        {modalAddService ? "Cancelar" : "+ Agregar servicio"}
-      </button>
+        {/* Botón Agregar Servicio */}
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={() => setModalAddService(!modalAddService)}
+            className="flex items-center gap-1.5 bg-sky-900 hover:bg-sky-950 text-white text-xs font-bold py-2 px-3.5 rounded-xl transition-all shadow-sm"
+          >
+            {modalAddService ? <X size={14} /> : <Plus size={14} />}
+            {modalAddService ? "Cancelar" : "Agregar servicio"}
+          </button>
+        </div>
 
-      <div>
+        {/* Formulario Crear Servicio */}
         {modalAddService && (
-          <form onSubmit={handleSubmit}>
-            <label>Ingrese en nombre:</label>
-            <input name="name" type="text" />
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="bg-sky-50/60 border border-sky-100 p-4 rounded-2xl mb-5 space-y-3"
+          >
+            <h3 className="text-xs font-bold text-sky-900 uppercase tracking-wider">
+              Nuevo Servicio
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Nombre</label>
+                <input
+                  name="name"
+                  type="text"
+                  required
+                  className="w-full bg-white border border-sky-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
 
-            <label>Ingrese la descripcion</label>
-            <input name="description" type="text" />
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Descripción</label>
+                <input
+                  name="description"
+                  type="text"
+                  required
+                  className="w-full bg-white border border-sky-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
 
-            <label>Ingrese la duracion/min</label>
-            <input name="durationInMinutes" type="text" />
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Duración (min)</label>
+                <input
+                  name="durationInMinutes"
+                  type="number"
+                  required
+                  className="w-full bg-white border border-sky-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
 
-            <label>Ingrese el precio</label>
-            <input name="price" type="text" />
-            <button type="submit">Agregar</button>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Precio ($)</label>
+                <input
+                  name="price"
+                  type="number"
+                  required
+                  className="w-full bg-white border border-sky-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-amber-300 hover:bg-amber-400 text-amber-950 font-semibold px-4 py-2 rounded-xl text-xs transition-all shadow-sm"
+              >
+                {loading ? "Guardando..." : "Agregar Servicio"}
+              </button>
+            </div>
           </form>
         )}
-      </div>
 
-      {loading && <p>Cargando servicios...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {/* Estados de Carga / Error */}
+        {loading && !modalAddService && (
+          <p className="text-xs text-sky-800 bg-sky-50 p-3 rounded-xl flex items-center gap-2">
+            <Clock size={16} className="animate-spin" /> Cargando servicios...
+          </p>
+        )}
 
-      {!loading && !error && (
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Duración (min)</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {servicios.map((service) => {
-              const isEditing = editingId === service.id;
+        {error && <p className="text-xs text-red-600 bg-red-50 p-3 rounded-xl mb-4">{error}</p>}
 
-              return (
-                <tr key={service.id}>
-                  {/* NOMBRE */}
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={editFormData.name}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            name: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      service.name
-                    )}
-                  </td>
-
-                  {/* DESCRIPCIÓN */}
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={editFormData.description}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      service.description || "-"
-                    )}
-                  </td>
-
-                  {/* DURACIÓN */}
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={editFormData.durationInMinutes}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            durationInMinutes: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      `${service.durationInMinutes} min`
-                    )}
-                  </td>
-
-                  {/* PRECIO */}
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={editFormData.price}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            price: Number(e.target.value),
-                          })
-                        }
-                      />
-                    ) : (
-                      `$${service.price}`
-                    )}
-                  </td>
-
-                  {/* ACCIONES */}
-                  <td>
-                    {isEditing ? (
-                      <>
-                        <button onClick={() => handleSaveEdit(service.id)}>
-                          Guardar
-                        </button>
-                        <button onClick={() => setEditingId(null)}>
-                          Cancelar
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={() => handleIniciarEdit(service)}>
-                          Editar
-                        </button>
-                        <button onClick={() => handleDelete(service.id)}>
-                          Eliminar
-                        </button>
-                      </>
-                    )}
-                  </td>
+        {/* Tabla de Servicios */}
+        {!loading && !error && (
+          <div className="border border-sky-100 rounded-2xl overflow-x-auto shadow-sm">
+            <table className="w-full text-left text-xs text-gray-700 min-w-[550px]">
+              <thead className="bg-sky-50/50 text-gray-400 font-bold uppercase border-b border-sky-100">
+                <tr>
+                  <th className="py-3 px-4">Nombre</th>
+                  <th className="py-3 px-4">Descripción</th>
+                  <th className="py-3 px-4">Duración</th>
+                  <th className="py-3 px-4">Precio</th>
+                  <th className="py-3 px-4 text-center">Acciones</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+              </thead>
+              <tbody className="divide-y divide-sky-50">
+                {servicios.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-6 text-center text-gray-400 italic">
+                      No hay servicios registrados para este local.
+                    </td>
+                  </tr>
+                ) : (
+                  servicios.map((service) => {
+                    const isEditing = editingId === service.id;
+
+                    return (
+                      <tr key={service.id} className="hover:bg-sky-50/30 transition-colors">
+                        <td className="py-3 px-4 font-semibold text-gray-900 whitespace-nowrap">
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editFormData.name}
+                              onChange={(e) =>
+                                setEditFormData({ ...editFormData, name: e.target.value })
+                              }
+                              className="bg-white border rounded px-2 py-1 text-xs w-full"
+                            />
+                          ) : (
+                            service.name
+                          )}
+                        </td>
+
+                        <td className="py-3 px-4 text-gray-500 max-w-[150px] truncate">
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editFormData.description}
+                              onChange={(e) =>
+                                setEditFormData({ ...editFormData, description: e.target.value })
+                              }
+                              className="bg-white border rounded px-2 py-1 text-xs w-full"
+                            />
+                          ) : (
+                            service.description || "-"
+                          )}
+                        </td>
+
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editFormData.durationInMinutes}
+                              onChange={(e) =>
+                                setEditFormData({
+                                  ...editFormData,
+                                  durationInMinutes: e.target.value,
+                                })
+                              }
+                              className="bg-white border rounded px-2 py-1 text-xs w-16"
+                            />
+                          ) : (
+                            `${service.durationInMinutes} min`
+                          )}
+                        </td>
+
+                        <td className="py-3 px-4 font-medium text-gray-800 whitespace-nowrap">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editFormData.price}
+                              onChange={(e) =>
+                                setEditFormData({
+                                  ...editFormData,
+                                  price: Number(e.target.value),
+                                })
+                              }
+                              className="bg-white border rounded px-2 py-1 text-xs w-20"
+                            />
+                          ) : (
+                            `$${service.price}`
+                          )}
+                        </td>
+
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          {isEditing ? (
+                            <div className="flex justify-center gap-1">
+                              <button
+                                onClick={() => handleSaveEdit(service.id)}
+                                className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+                              >
+                                <Check size={16} />
+                              </button>
+                              <button
+                                onClick={() => setEditingId(null)}
+                                className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex justify-center gap-2">
+                              <button
+                                onClick={() => handleIniciarEdit(service)}
+                                className="text-sky-700 hover:text-sky-900 transition-colors p-1"
+                              >
+                                <Edit2 size={15} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(service.id)}
+                                className="text-sky-700 hover:text-sky-900 transition-colors p-1"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };
+
+
+
+

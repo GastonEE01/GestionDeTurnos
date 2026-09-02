@@ -2,8 +2,8 @@ import './App.css'
 import {  Route, Routes } from 'react-router-dom'
 
 // Componentes
-import { Header } from './components/Header/Header'
 import { Home } from './components/Pages/Home'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // Páginas
 import { Landing } from './components/Pages/Landing' 
@@ -44,14 +44,13 @@ function App() {
 
         <Route path='/Inicio' element={     
         <>
-        <Header/>
         <Home/>
         </>}>
         </Route>
         
-        
-
-        
+        <Route element={<ProtectedRoute />}>
+          <Route path="/Inicio" element={<Home />} />
+        </Route>
         
        </Routes>
      </div>

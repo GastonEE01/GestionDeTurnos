@@ -1,0 +1,132 @@
+/* Agrega esto al inicio o sección de reglas nativas */
+*, ::before, ::after {
+  box-sizing: border-border;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+}
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+}
+
+:root {
+  color-scheme: light;
+  --background: oklch(0.975 0.012 220);
+  --foreground: oklch(0.19 0.035 238);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.035 238);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.035 238);
+  --primary: oklch(0.34 0.1 238);
+  --primary-foreground: oklch(0.98 0.01 220);
+  --secondary: oklch(0.93 0.025 220);
+  --secondary-foreground: oklch(0.27 0.06 238);
+  --muted: oklch(0.95 0.018 220);
+  --muted-foreground: oklch(0.5 0.035 238);
+  --accent: oklch(0.76 0.15 74);
+  --accent-foreground: oklch(0.2 0.04 70);
+  --destructive: oklch(0.58 0.2 25);
+  --border: oklch(0.89 0.025 220);
+  --input: oklch(0.89 0.025 220);
+  --ring: oklch(0.55 0.1 238);
+  --radius: 0.625rem;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+/* Escala el tamaño base del texto en todo el sitio */
+html {
+  font-size: 17px; /* El valor por defecto suele ser 16px */
+}
+
+body {
+  font-size: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Fuerza a que las clases de texto pequeño no sean invisibles */
+.text-xs {
+  font-size: 1.5rem !important; /* Pasa de 12px a ~14px */
+}
+
+.text-sm {
+  font-size: 1.25rem !important;  /* Pasa de 14px a ~16px */
+}
+
+/* En lugar de @layer base con @apply, usamos CSS nativo */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(118deg, oklch(0.94 0.035 220), oklch(0.99 0.005 220));
+  padding: 2rem;
+}
+
+.hero-mark {
+  position: absolute;
+  right: 2rem;
+  bottom: 1.5rem;
+  color: var(--accent);
+  transform: rotate(-12deg);
+}
+
+@media (min-width: 768px) {
+  .hero-panel { padding: 3rem; }
+}
