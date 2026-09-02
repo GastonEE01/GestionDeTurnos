@@ -112,6 +112,7 @@ export const createLocal = async (
       errorData.detail ||
       errorData.title ||
       "Error al registrar el local";
+      throw new Error(message);
   }
 
   return rest.json();
@@ -152,8 +153,7 @@ export const addTurno = async (
       errorData?.message ||
       errorData?.Message ||
       "Error al cancelar el turno ";
-
-    throw new Error(errorData.message || "Error al agregar un turno ");
+    throw new Error(errorMessage);
   }
 
   /*
