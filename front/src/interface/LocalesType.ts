@@ -22,6 +22,7 @@ export interface LocalesTableProps {
   onEliminar?: (id: number) => void;
   onAgregarServicio?: (localId: number) => void;
   onDeleteSuccess?: (id: string) => void;
+  onServiceSuccess?: () => void;
 }
 
 export interface UpdateLocalDto { 

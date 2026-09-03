@@ -64,6 +64,7 @@ export const ModalService: React.FC<ModalServiceProps> = ({
       const response = await deleteService(local.id, servicioId);
       setServicios((prev) => prev.filter((s) => s.id !== servicioId));
       toast.success(response.message);
+      if (onSuccess) onSuccess();
     } catch (error: unknown) {
       const errorObject = error as Error;
       toast.error(errorObject.message);
@@ -99,6 +100,7 @@ export const ModalService: React.FC<ModalServiceProps> = ({
       );
       toast.success("Servicio actualizado");
       setEditingId(null);
+      if (onSuccess) onSuccess();
     } catch (err) {
       const errorObject = err as Error;
       toast.error(errorObject.message || "Error al actualizar servicio");

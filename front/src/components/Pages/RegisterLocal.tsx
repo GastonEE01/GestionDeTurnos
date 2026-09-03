@@ -97,6 +97,12 @@ export const RegisterLocal: React.FC = () => {
       return;
     }
 
+    if (horariosList.length === 0) {
+      toast.error("Debes agregar al menos un horario de atención");
+      setLoading(false);
+      return;
+    }
+
     const local: LocalesType = {
       name: formData.get("localName") as string,
       description: formData.get("localDescription") as string,
@@ -105,11 +111,11 @@ export const RegisterLocal: React.FC = () => {
       direction: formData.get("localAddress") as string,
       phone: formData.get("localPhone") as string,
       servicios: [],
-      horariosAtencion: [],
+      horariosAtencion: horariosList,
       id: "",
     };
 
-    const diaSelected = formData.get("localDay");
+    /*const diaSelected = formData.get("localDay");
     const diaSemanaNumber =
       diaSelected !== null && diaSelected !== "" ? Number(diaSelected) : -1;
 
@@ -119,10 +125,10 @@ export const RegisterLocal: React.FC = () => {
       horaApertura: formData.get("localOpeningDay") as string,
       horaCierre: formData.get("localClosingDay") as string,
       estaCerrado: false,
-    };
+    };*/
 
     try {
-      const rest = await addUsuarioLocal(user, local, horarioAtencion);
+      const rest = await addUsuarioLocal(user, local, horariosList);
       toast.success(rest.message);
 
       formRef.current?.reset();

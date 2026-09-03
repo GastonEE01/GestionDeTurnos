@@ -25,6 +25,11 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             _context.HorariosAtencion.AddAsync(horario);
         }
 
+        public async Task Delete(HorarioAtencion hExistente)
+        {
+            _context.HorariosAtencion.Remove(hExistente);
+        }
+
         public async Task<HorarioAtencion?> existingHorarios(List<HorarioAtencionRequestDto> horarios)
         {
             if (horarios == null || !horarios.Any()) return null;

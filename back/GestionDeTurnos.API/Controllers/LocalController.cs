@@ -57,12 +57,17 @@ namespace GestionDeTurnos.API.Controllers
          return Ok(new { message = "Local eliminado" });
         }
 
-      /*  [HttpPost]
-        public async Task<ActionResult> AddLocal(AddLocalRequest dto)
+        [HttpPost("asociar-locales")]
+        public async Task<IActionResult> AsociarLocalForUser([FromBody] AsociarLocalForUserRequestDto dto)
         {
-                var local = await _addLocal.AddLocal (dto.Local, dto.Horarios);    
-                return Ok(local);
-        } */
+                dto.Local.UsuarioId = dto.UsuarioId;
+                var localResponse = await _addLocal.AddLocal(dto.Local, dto.Horarios);
+
+                return Ok(localResponse);
+            
+           
+        }
+
 
         [HttpPut("{idLocal}")]
         public async Task<ActionResult> modifyLocal([FromRoute] Guid idLocal,[FromBody] UpdateLocalRequestDto dto)

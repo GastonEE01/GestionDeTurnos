@@ -11,6 +11,7 @@ namespace GestionDeTurnos.Application.Interface
     public interface IHorarioAtencionRepository
     {
         Task Add(HorarioAtencion horarios);
+        Task Delete(HorarioAtencion hExistente);
         Task <HorarioAtencion> existingHorarios(List<HorarioAtencionRequestDto> horarios);
         Task<List<HorarioAtencion>> GetHorarioByLocalId(Guid localId);
         Task SaveChangesAsync();

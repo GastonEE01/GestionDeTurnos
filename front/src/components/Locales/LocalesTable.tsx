@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { ModalTurno } from "../Turnos/ModalTurno.tsx";
 import { ModalLocal } from "./ModalLocal.tsx";
 import { ModalService } from "../Servicio/ModalService.tsx";
-import { 
-  Store, 
-  MapPin, 
-  ArrowRight, 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  Layers 
+import {
+  Store,
+  MapPin,
+  ArrowRight,
+  Plus,
+  Trash2,
+  Edit3,
+  Layers,
 } from "lucide-react";
 
 // interface
@@ -17,10 +17,6 @@ import type {
   LocalesTableProps,
   LocalesType,
 } from "../../interface/LocalesType.ts";
-/*import {
-  DayOfWeek,
-  type HorarioAtencionType,
-} from "../../interface/HorarioAtencionType.ts";*/
 
 import { deletedLocal } from "../../service/api.ts";
 import toast from "react-hot-toast";
@@ -29,6 +25,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({
   data,
   user,
   onDeleteSuccess,
+  onServiceSuccess,
 }) => {
   const [selectedLocal, setSelectedLocal] = useState<LocalesType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +72,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({
     setSelectedLocal(null);
   };
 
-// VISTA CLIENTE
+  // VISTA CLIENTE
   if (user.rol === "Cliente") {
     return (
       <div className="w-full">
@@ -176,7 +173,10 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
               {data.map((local) => (
-                <tr key={local.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr
+                  key={local.id}
+                  className="hover:bg-gray-50/50 transition-colors"
+                >
                   <td className="p-4 font-semibold text-gray-900">
                     {local.name}
                   </td>
@@ -224,72 +224,30 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({
 
       {isModalOpen && (
         <ModalLocal
-          cerrar={handleCerrarModal}
-          usuarioId={user.id}
+          cerrar={() => {
+            handleCerrarModal();
+          }}
+          user={user} // user.id
           localToEdit={selectedLocal}
-          onSuccess={() => {}}
+          onSuccess={() => {
+            handleCerrarModal();
+            if (onServiceSuccess) onServiceSuccess();
+          }}
         />
       )}
       {isModalOpenService && selectedLocal && (
         <ModalService
-          cerrar={handleCerrarModalService}
+          cerrar={() => {
+            handleCerrarModalService();
+          }}
           local={selectedLocal}
           usuarioId={user.id}
-          onSuccess={() => {}}
+          onSuccess={() => {
+            handleCerrarModalService();
+            if (onServiceSuccess) onServiceSuccess();
+          }}
         />
       )}
     </div>
   );
 };
-
-/*
-
- <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Descripcion</th>
-              <th>Categoria</th>
-              <th>ImagenURL</th>
-              <th>Direccion</th>
-              <th>Telefono</th>
-              <th>Servicios</th>
-              <th>Horarios de Atencion</th>
-              <th>Horarios disponibles</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((local) => (
-              <tr key={local.id}>
-                <td>{local.name}</td>
-                <td>{local.description}</td>
-                <td>{local.category}</td>
-                <td>{local.direction}</td>
-                <td>{local.phone}</td>
-                <td>{local.imageURL}</td>
-                <td>
-                  {local.servicios.length > 0
-                    ? local.servicios.map((s) => s.name).join(", ")
-                    : "Sin servicios"}
-                </td>
-                <td>
-                  {local.horariosAtencion.length > 0
-                    ? local.horariosAtencion
-                        .map(
-                          (h) =>
-                            `${h.estaCerrado ? "Cerrado" : "Abierto"}: ${DayOfWeek[Number(h.diaSemana) as keyof typeof DayOfWeek]}: ${h.horaApertura.substring(0, 5)} - ${h.horaCierre.substring(0, 5)}`,
-                        )
-                        .join(", ")
-                    : "Sin horarios"}
-                </td>
-
-                <td>
-                  <button onClick={() => setSelectedLocal(local)}>
-                    Pedir turno
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>*/

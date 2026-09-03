@@ -14,6 +14,7 @@ export interface LoginDtoResponse{
 
 export interface AutenticacionType{
     user: LoginDtoResponse | null;
+    token: string | null;
     login: (userData: LoginDtoResponse, token: string) => void;
     logout: () => void; 
 }

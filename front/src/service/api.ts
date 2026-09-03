@@ -54,13 +54,23 @@ export const deletedLocal = async (localId: string): Promise<ApiResponse> => {
 export const updateLocal = async (
   localId: string,
   localData: UpdateLocalDto,
+  horariosDto: HorarioAtencionType[]
 ): Promise<LocalesType & ApiResponse> => {
+  const payload = {
+    ...localData,
+    horarios: horariosDto.map((h) => ({
+      diaSemana: h.diaSemana,
+      horaApertura: h.horaApertura.length === 5 ? `${h.horaApertura}:00` : h.horaApertura,
+      horaCierre: h.horaCierre.length === 5 ? `${h.horaCierre}:00` : h.horaCierre,
+      estaCerrado: h.estaCerrado,
+    })),
+  };
   const rest = await fetch(`${API_URL}/api/Local/${localId}`, {
     method: "PUT",
     headers: {
       "Content-type": "application/json",
     },
-    body: JSON.stringify(localData),
+    body: JSON.stringify(payload),
   });
   if (!rest.ok) {
     const errorData = await rest.json().catch(() => ({}));
@@ -96,7 +106,7 @@ export const createLocal = async (
     ],
   };
 
-  const rest = await fetch(`${API_URL}/api/Local`, {
+  const rest = await fetch(`${API_URL}/api/Local/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -116,6 +126,47 @@ export const createLocal = async (
   }
 
   return rest.json();
+};
+
+export const asociarLocalForUser = async (
+  usuarioId: string,
+  localDto: Omit<LocalesType, "id">,
+  horariosDto: HorarioAtencionType[]
+) => {
+  const payload = {
+    usuarioId,
+    local: {
+      name: localDto.name,
+      description: localDto.description,
+      category: localDto.category,
+      imageURL: localDto.imageURL,
+      direction: localDto.direction,
+      phone: localDto.phone,
+    },
+    horarios: horariosDto.map((h) => ({
+      diaSemana: h.diaSemana,
+      horaApertura:
+        h.horaApertura.length === 5 ? `${h.horaApertura}:00` : h.horaApertura,
+      horaCierre:
+        h.horaCierre.length === 5 ? `${h.horaCierre}:00` : h.horaCierre,
+      estaCerrado: h.estaCerrado,
+    })),
+  };
+
+  const res = await fetch(`${API_URL}/api/Local/asociar-locales`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    const mensajeError =
+      errorData.Message || errorData.message || "Error al asociar el local";
+    throw new Error(mensajeError);
+  }
+
+  return res.json();
 };
 
 export const getLocalesByUser = async (
@@ -155,23 +206,6 @@ export const addTurno = async (
       "Error al cancelar el turno ";
     throw new Error(errorMessage);
   }
-
-  /*
-       if(!rest.ok){
-            const errorData = await rest.json().catch(() => ({}));
-          const errorMessage = 
-    (typeof errorData === 'string' ? errorData : null) ||
-    errorData?.message || 
-    errorData?.Message || 
-    'Error al eliminar un servicio';
-
-  throw new Error(errorMessage);
-}
-
-if (rest.status === 204) {
-    return { message: "Servicio eliminado exitosamente" } as ApiResponse;
-  }
-    */
   return rest.json();
 };
 
@@ -257,7 +291,7 @@ export const getHorarioAtencionUsuario = async (
 export const addUsuarioLocal = async (
   userDto: UsuarioRegisterDto,
   localDto: Omit<LocalesType, "id">,
-  horarioDto: HorarioAtencionType,
+  horarioDto: HorarioAtencionType[],
 ) => {
   const payload = {
     user: { ...userDto, rol: "Local" },
@@ -269,20 +303,18 @@ export const addUsuarioLocal = async (
       direction: localDto.direction,
       phone: localDto.phone,
     },
-    horarios: [
-      {
-        diaSemana: horarioDto.diaSemana,
+        horarios: horarioDto.map((horario) => ({
+        diaSemana: horario.diaSemana,
         horaApertura:
-          horarioDto.horaApertura.length === 5
-            ? `${horarioDto.horaApertura}:00`
-            : horarioDto.horaApertura,
+          horario.horaApertura.length === 5
+            ? `${horario.horaApertura}:00`
+            : horario.horaApertura,
         horaCierre:
-          horarioDto.horaCierre.length === 5
-            ? `${horarioDto.horaCierre}:00`
-            : horarioDto.horaCierre,
-        estaCerrado: horarioDto.estaCerrado,
-      },
-    ],
+          horario.horaCierre.length === 5
+            ? `${horario.horaCierre}:00`
+            : horario.horaCierre,
+        estaCerrado: horario.estaCerrado,
+      })),
   };
 
   const res = await fetch(`${API_URL}/api/Registro/registro-local`, {
@@ -332,6 +364,7 @@ export const addUsuario = async (
 export const loginUser = async (
   credentials: LoginDtoRequest,
 ): Promise<LoginDtoResponse> => {
+  try{
   const rest = await fetch(`${API_URL}/api/JWTService/Login`, {
     method: "POST",
     headers: {
@@ -342,17 +375,30 @@ export const loginUser = async (
   console.log(rest);
 
   if (!rest.ok) {
+      throw new Error("Credenciales incorrectas");
+    }
+
+    const data = await rest.json(); 
+    
+    console.log("Datos reales del usuario:", data); // Aquí deberías ver tu id, name, token, etc.
+    
+    return data; // Esto es lo que le pasas luego a tu store de Zustand
+  } catch (error) {
+    console.error("Error en el login:", error);
+    throw error;
+  }
+ /* if (!rest.ok) {
     const errorData = await rest.json().catch(() => ({}));
     const errorMessage =
       (typeof errorData === "string" ? errorData : null) ||
       errorData?.message ||
       errorData?.Message ||
       "Error al iniciar sesión";
+console.log("Datos que llegaron:", errorData);
 
     throw new Error(errorMessage);
   }
-
-  return rest.json();
+  return rest.json();*/
 };
 
 // SERVICIO

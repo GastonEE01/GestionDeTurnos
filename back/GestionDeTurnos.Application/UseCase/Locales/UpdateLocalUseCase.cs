@@ -12,10 +12,12 @@ namespace GestionDeTurnos.Application.UseCase.Locales
     public class UpdateLocalUseCase
     {
         private readonly ILocalRepository _localRepository;
+        private readonly IHorarioAtencionRepository _horarioRepository; // 👈 Asegúrate de tenerlo inyectado
 
-        public UpdateLocalUseCase(ILocalRepository localRepository)
+        public UpdateLocalUseCase(ILocalRepository localRepository, IHorarioAtencionRepository horarioRepository)
         {
             _localRepository = localRepository;
+            _horarioRepository = horarioRepository;
         }
 
         public async Task<UpdateLocalResponseDto> ExecuteAsync(Guid idLocal, UpdateLocalRequestDto dto)
@@ -42,6 +44,33 @@ namespace GestionDeTurnos.Application.UseCase.Locales
             if (!string.IsNullOrEmpty(dto.Phone)) local.Phone = dto.Phone;
 
             await _localRepository.Update(local);
+
+            if (dto.Horarios != null)
+            {
+                // 1. Buscamos y borramos los horarios que tenía el local anteriormente
+                var horariosActuales = await _horarioRepository.GetHorarioByLocalId(idLocal);
+                foreach (var hExistente in horariosActuales)
+                {
+                    await _horarioRepository.Delete(hExistente); // O usa el método que tengas para borrar
+                }
+
+                // 2. Insertamos los nuevos horarios que mandó el frontend
+                foreach (var hDto in dto.Horarios)
+                {
+                    var nuevoHorario = new HorarioAtencion
+                    {
+                        LocalId = idLocal,
+                        DiaSemana = hDto.DiaSemana,
+                        HoraApertura = TimeSpan.Parse(hDto.HoraApertura),
+                        HoraCierre = TimeSpan.Parse(hDto.HoraCierre),
+                        EstaCerrado = hDto.EstaCerrado
+                    };
+                    await _horarioRepository.Add(nuevoHorario);
+                }
+
+                await _horarioRepository.SaveChangesAsync();
+            }
+
             UpdateLocalResponseDto responseDto = new UpdateLocalResponseDto
             {   
                 Name = local.Name,

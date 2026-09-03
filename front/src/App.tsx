@@ -12,48 +12,20 @@ import { RegisterClient } from './components/Pages/RegisterClient'
 import { RegisterLocal } from './components/Pages/RegisterLocal'
 
 function App() {
- 
-
   return (
     <>
-     <div>
-      <Routes>
-        <Route path='/' element={     
-        <>
-        <Landing />
-        </>}>
-        </Route>
+      <div>
+        <Routes>
+          <Route path='/' element={<Landing />} />
+          <Route path='/registro/cliente' element={<RegisterClient />} />
+          <Route path='/registro/local' element={<RegisterLocal />} />
+          <Route path='/iniciar-sesion' element={<Login />} />
 
-        <Route path='/registro/cliente' element={     
-        <>
-        <RegisterClient />
-        </>}>
-        </Route>
-
-        <Route path='/registro/local' element={     
-        <>
-        <RegisterLocal />
-        </>}>
-        </Route>
-
-        <Route path='/iniciar-sesion' element={     
-        <>
-        <Login />
-        </>}>
-        </Route>
-
-        <Route path='/Inicio' element={     
-        <>
-        <Home/>
-        </>}>
-        </Route>
-        
-        <Route element={<ProtectedRoute />}>
-          <Route path="/Inicio" element={<Home />} />
-        </Route>
-        
-       </Routes>
-     </div>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/Inicio" element={<Home />} />
+          </Route>
+        </Routes>
+      </div>
     </>
   )
 }
