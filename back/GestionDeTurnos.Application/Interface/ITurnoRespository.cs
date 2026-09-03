@@ -16,5 +16,6 @@ namespace GestionDeTurnos.Application.Interface
         Task<Turno> GetByTurnoIdAsync(Guid usuarioId);
         Task<List<Turno>> GetTurnosByLocalAndFechaAsync(Guid localId, DateTime fecha);
         Task<List<Turno>> GetTurnosByUsuarioIdAsync(Guid usuarioId);
+        Task<List<Turno>> GetTurnosByLocalIdAsync(Guid localId);
     }
 }

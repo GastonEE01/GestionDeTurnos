@@ -13,5 +13,7 @@ namespace GestionDeTurnos.Application.DTOs.TurnoDTO
         public Guid LocalId { get; set; }
         public Guid ServicioId { get; set; }
         public bool EstaPedido { get; set; }
+        public string ServicioName { get; set; }  // <-- Agregado
+        public string LocalName { get; set; }     // <-- Agregado
     }
 }

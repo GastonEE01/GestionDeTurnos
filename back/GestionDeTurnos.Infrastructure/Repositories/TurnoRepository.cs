@@ -64,5 +64,14 @@ namespace GestionDeTurnos.Infrastructure.Repositories
                 .OrderByDescending(t => t.Date)
                 .ToListAsync() ;
         }
+
+        public async Task<List<Turno>> GetTurnosByLocalIdAsync(Guid localId)
+        {
+            // Asegúrate de que aquí consultas la tabla de turnos filtrando por el LocalId
+            return await _context.Turnos
+                .Where(t => t.LocalId == localId)
+                .ToListAsync();
+        }
+
     }
 }

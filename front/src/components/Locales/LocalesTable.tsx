@@ -139,6 +139,7 @@ export const LocalesTable: React.FC<LocalesTableProps> = ({
             usuarioId={user.id}
             localId={selectedLocal.id}
             servicios={selectedLocal.servicios}
+            horariosAtencion={selectedLocal.horariosAtencion}
           />
         )}
       </div>

@@ -10,7 +10,9 @@ export interface TurnoDtoResponse{
   id: string,
   usuarioId: string; 
   localId: string; 
+  localName?: string;
   servicioId: string; 
+  servicioName?: string;
   date: string; 
 }
 
@@ -19,5 +21,12 @@ export interface TurnosProps {
 }
 
 export interface TurnosTableProps{
-  idUsuario: string;
+  idUsuario?: string;
+  idLocal?: string;
+}
+
+export interface GetTurnosUsuarioResponse {
+  usuarioId: string;
+  nameUser: string;
+  turnos: TurnoDtoResponse[];
 }

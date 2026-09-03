@@ -59,7 +59,7 @@ builder.Services.AddScoped<AddTurnoUseCase>();
 builder.Services.AddScoped<CancelTurnoUseCase>();
 builder.Services.AddScoped<GetTurnosPorUsuarioUseCase>();
 builder.Services.AddScoped<GetTurnosSlotUseCase>();
-
+builder.Services.AddScoped<GetTurnosUserLocalUseCase>();
 
 
 // AutoMapper

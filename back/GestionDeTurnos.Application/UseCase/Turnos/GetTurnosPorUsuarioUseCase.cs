@@ -14,11 +14,15 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
     {
         private readonly IUserRepository _userRepository;
         private readonly ITurnoRespository _turnoRespository;
+        private readonly ILocalRepository _localRepository;         // <-- Inyecta el repositorio de locales
+        private readonly IServicioRepository _servicioRepository;
 
-        public GetTurnosPorUsuarioUseCase(IUserRepository userRepository, ITurnoRespository turnoRespository)
+        public GetTurnosPorUsuarioUseCase(IUserRepository userRepository, ITurnoRespository turnoRespository, ILocalRepository localRepository, IServicioRepository servicioRepository)
         {
             _userRepository = userRepository;
             _turnoRespository = turnoRespository;
+            _localRepository = localRepository;
+            _servicioRepository = servicioRepository;
         }
 
         public async Task<GetTurnosUsuarioResponse> GetTurnosByUser(Guid usuarioId)
@@ -27,20 +31,44 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
             if (user == null) throw new Exception("El usuario no existe");
 
             var turnos = await _turnoRespository.GetTurnosByUsuarioIdAsync(usuarioId);
+            var turnosDto = new List<TurnoDto>();
 
-            return new GetTurnosUsuarioResponse
+            foreach (var t in turnos)
             {
-                UsuarioId = user.Id,
-                NameUser = user.Name, // si tu entidad Usuario tiene esta propiedad
-                Turnos = turnos.Select(t => new TurnoDto
+                // Buscamos el nombre del local y del servicio correspondientes
+                var local = await _localRepository.GetLocalById(t.LocalId);
+                var servicio = await _servicioRepository.GetServiceById(t.ServicioId);
+
+                turnosDto.Add(new TurnoDto
                 {
                     Id = t.Id,
                     Date = t.Date,
                     LocalId = t.LocalId,
+                    LocalName = local?.Name ?? "Local desconocido",       // <-- Asignamos nombre
                     ServicioId = t.ServicioId,
+                    ServicioName = servicio?.Name ?? "Servicio desconocido", // <-- Asignamos nombre
                     EstaPedido = t.EstaPedido
-                }).ToList()
+                });
+            }
+            return new GetTurnosUsuarioResponse
+            {
+                UsuarioId = user.Id,
+                NameUser = user.Name,
+                Turnos = turnosDto
             };
+            /* return new GetTurnosUsuarioResponse
+             {
+                 UsuarioId = user.Id,
+                 NameUser = user.Name, // si tu entidad Usuario tiene esta propiedad
+                 Turnos = turnos.Select(t => new TurnoDto
+                 {
+                     Id = t.Id,
+                     Date = t.Date,
+                     LocalId = t.LocalId,
+                     ServicioId = t.ServicioId,
+                     EstaPedido = t.EstaPedido
+                 }).ToList() };*/
+        
         }
     }
 }

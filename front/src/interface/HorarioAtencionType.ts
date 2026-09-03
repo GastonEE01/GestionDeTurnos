@@ -16,3 +16,11 @@ export interface HorarioAtencionType {
     horaCierre: string;  // Formato "HH:mm"
     estaCerrado: boolean;
 }
+
+export interface HorarioAtencionDto {
+  id?: string;
+  diaSemana: number; 
+  horaApertura: string;
+  horaCierre: string;
+  estaCerrado: boolean;
+}

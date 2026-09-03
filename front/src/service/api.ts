@@ -6,11 +6,11 @@ import { type TurnoDtoResponse } from "../interface/TurnosType.ts";
 import { type LocalesType } from "../interface/LocalesType.ts";
 import { type UsuarioRegisterDto } from "../interface/UsuarioType.ts";
 import { type HorarioAtencionType } from "../interface/HorarioAtencionType.ts";
+import { type GetTurnosUsuarioResponse } from "../interface/TurnosType.ts";
 
 import { type LoginDtoRequest } from "../interface/LoginType.ts";
 import { type LoginDtoResponse } from "../interface/LoginType.ts";
 
-//import { type ServicioType } from '../interface/ServicioType.ts'
 import { type ServicioDtoRequest } from "../interface/ServicioType.ts";
 import { type ServicioDtoResponse } from "../interface/ServicioType.ts";
 
@@ -54,14 +54,16 @@ export const deletedLocal = async (localId: string): Promise<ApiResponse> => {
 export const updateLocal = async (
   localId: string,
   localData: UpdateLocalDto,
-  horariosDto: HorarioAtencionType[]
+  horariosDto: HorarioAtencionType[],
 ): Promise<LocalesType & ApiResponse> => {
   const payload = {
     ...localData,
     horarios: horariosDto.map((h) => ({
       diaSemana: h.diaSemana,
-      horaApertura: h.horaApertura.length === 5 ? `${h.horaApertura}:00` : h.horaApertura,
-      horaCierre: h.horaCierre.length === 5 ? `${h.horaCierre}:00` : h.horaCierre,
+      horaApertura:
+        h.horaApertura.length === 5 ? `${h.horaApertura}:00` : h.horaApertura,
+      horaCierre:
+        h.horaCierre.length === 5 ? `${h.horaCierre}:00` : h.horaCierre,
       estaCerrado: h.estaCerrado,
     })),
   };
@@ -122,7 +124,7 @@ export const createLocal = async (
       errorData.detail ||
       errorData.title ||
       "Error al registrar el local";
-      throw new Error(message);
+    throw new Error(message);
   }
 
   return rest.json();
@@ -131,7 +133,7 @@ export const createLocal = async (
 export const asociarLocalForUser = async (
   usuarioId: string,
   localDto: Omit<LocalesType, "id">,
-  horariosDto: HorarioAtencionType[]
+  horariosDto: HorarioAtencionType[],
 ) => {
   const payload = {
     usuarioId,
@@ -237,6 +239,27 @@ export const deleteTurno = async (
   return rest.json();
 };
 
+export const getTurnosPorLocal = async (
+  localId: string,
+): Promise<TurnoDtoResponse[]> => {
+  const rest = await fetch(`${API_URL}/api/Turno/local/${localId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!rest.ok) {
+    const errorData = await rest.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "Error al obtener los turnos del local",
+    );
+  }
+
+  const data = await rest.json();
+  return Array.isArray(data) ? data : [];
+};
+
 // HORARIO ATENCION
 export const getHorarioAtencionDisponible = async (
   localId: string,
@@ -283,7 +306,7 @@ export const getHorarioAtencionUsuario = async (
     const errorData = await rest.json().catch(() => ({}));
     throw new Error(errorData.message || "Error al obtener los turnos");
   }
-  const data = await rest.json();
+  const data: GetTurnosUsuarioResponse = await rest.json();
   return Array.isArray(data.turnos) ? data.turnos : [];
 };
 
@@ -303,18 +326,18 @@ export const addUsuarioLocal = async (
       direction: localDto.direction,
       phone: localDto.phone,
     },
-        horarios: horarioDto.map((horario) => ({
-        diaSemana: horario.diaSemana,
-        horaApertura:
-          horario.horaApertura.length === 5
-            ? `${horario.horaApertura}:00`
-            : horario.horaApertura,
-        horaCierre:
-          horario.horaCierre.length === 5
-            ? `${horario.horaCierre}:00`
-            : horario.horaCierre,
-        estaCerrado: horario.estaCerrado,
-      })),
+    horarios: horarioDto.map((horario) => ({
+      diaSemana: horario.diaSemana,
+      horaApertura:
+        horario.horaApertura.length === 5
+          ? `${horario.horaApertura}:00`
+          : horario.horaApertura,
+      horaCierre:
+        horario.horaCierre.length === 5
+          ? `${horario.horaCierre}:00`
+          : horario.horaCierre,
+      estaCerrado: horario.estaCerrado,
+    })),
   };
 
   const res = await fetch(`${API_URL}/api/Registro/registro-local`, {
@@ -364,30 +387,30 @@ export const addUsuario = async (
 export const loginUser = async (
   credentials: LoginDtoRequest,
 ): Promise<LoginDtoResponse> => {
-  try{
-  const rest = await fetch(`${API_URL}/api/JWTService/Login`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-  console.log(rest);
+  try {
+    const rest = await fetch(`${API_URL}/api/JWTService/Login`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+    console.log(rest);
 
-  if (!rest.ok) {
+    if (!rest.ok) {
       throw new Error("Credenciales incorrectas");
     }
 
-    const data = await rest.json(); 
-    
+    const data = await rest.json();
+
     console.log("Datos reales del usuario:", data); // Aquí deberías ver tu id, name, token, etc.
-    
+
     return data; // Esto es lo que le pasas luego a tu store de Zustand
   } catch (error) {
     console.error("Error en el login:", error);
     throw error;
   }
- /* if (!rest.ok) {
+  /* if (!rest.ok) {
     const errorData = await rest.json().catch(() => ({}));
     const errorMessage =
       (typeof errorData === "string" ? errorData : null) ||

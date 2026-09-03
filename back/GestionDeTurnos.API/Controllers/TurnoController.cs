@@ -15,12 +15,14 @@ namespace GestionDeTurnos.API.Controllers
         private readonly CancelTurnoUseCase _cancelTurnoUseCase;
         private readonly GetTurnosPorUsuarioUseCase _getTurnosPorUsuarioUseCase;
         private readonly GetTurnosSlotUseCase _getTurnosSlotUseCase;
+        private readonly GetTurnosUserLocalUseCase _getTurnosUserLocalUseCase;
 
-        public TurnoController(AddTurnoUseCase addTurnoUseCase,CancelTurnoUseCase cancelTurnoUseCase,GetTurnosPorUsuarioUseCase getTurnosPorUsuarioUseCase,GetTurnosSlotUseCase getTurnosSlotUseCase) {
+        public TurnoController(AddTurnoUseCase addTurnoUseCase,CancelTurnoUseCase cancelTurnoUseCase,GetTurnosPorUsuarioUseCase getTurnosPorUsuarioUseCase,GetTurnosSlotUseCase getTurnosSlotUseCase,GetTurnosUserLocalUseCase getTurnosUserLocalUseCase) {
             _addTurnoUseCase = addTurnoUseCase;
             _cancelTurnoUseCase= cancelTurnoUseCase;
             _getTurnosPorUsuarioUseCase = getTurnosPorUsuarioUseCase;
             _getTurnosSlotUseCase = getTurnosSlotUseCase;
+            _getTurnosUserLocalUseCase = getTurnosUserLocalUseCase;
         }
 
         [HttpPost]
@@ -51,5 +53,13 @@ namespace GestionDeTurnos.API.Controllers
             List<TimeSpan> turnosSlot = await _getTurnosSlotUseCase.GetTurnos(localId,servicioId,fecha);
             return Ok(turnosSlot);  
         }
+
+        [HttpGet("local/{localId}")]
+        public async Task<IActionResult> GetTurnosLocal(Guid localId)
+        {
+            var turnos = await _getTurnosUserLocalUseCase.GetTurnosByLocal(localId);
+            return Ok(turnos); 
+        }
+
     }
 }

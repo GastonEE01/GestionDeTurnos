@@ -34,9 +34,9 @@ export const Home = () => {
   const [filterCategoria, setFilterCategoria] = useState("");
   const [locales, setLocales] = useState<LocalesType[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  // Opciones de navegación dinámicas según el rol
+  
   const clientNav = ["Inicio", "Pedir turno", "Mis turnos", "Historial"];
-  const ownerNav = ["Inicio"];
+  const ownerNav = ["Inicio", "Turnos recibidos"];
   const navItems = user?.rol === "Local" ? ownerNav : clientNav;
 
   useEffect(() => {
@@ -265,21 +265,52 @@ export const Home = () => {
 
           {/* Vista Local */}
           {user.rol === "Local" && (
-            <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900">
-                Panel de Administración de tu Local
-              </h2>
-              <p className="mt-1 text-sm text-gray-500 mb-6">
-                Acá se mostrará la agenda de turnos recibidos y la edición de
-                horarios.
-              </p>
-              <LocalesTable
-                data={localFilter}
-                user={user}
-                onDeleteSuccess={() => setRefreshTrigger((prev) => prev + 1)}
-                onServiceSuccess={() => setRefreshTrigger((prev) => prev + 1)}
-              />
-            </section>
+            <div className="space-y-8">
+              {section === "Inicio" && (
+                <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Panel de Administración de tu Local
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500 mb-6">
+                    Acá se mostrará la agenda de turnos recibidos y la edición
+                    de horarios.
+                  </p>
+                  <LocalesTable
+                    data={localFilter}
+                    user={user}
+                    onDeleteSuccess={() =>
+                      setRefreshTrigger((prev) => prev + 1)
+                    }
+                    onServiceSuccess={() =>
+                      setRefreshTrigger((prev) => prev + 1)
+                    }
+                  />
+                </section>
+              )}
+
+              {/* SECCIÓN TURNOS RECIBIDOS */}
+              {section === "Turnos recibidos" && (
+                <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <p className="text-xs font-bold tracking-widest text-sky-600 uppercase mb-1">
+                    Administración
+                  </p>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                    Turnos recibidos
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-6">
+                    Listado de reservas hechas por tus clientes.
+                  </p>
+
+                  {locales.length > 0 ? (
+                    <TurnosTable idLocal={locales[0].id} />
+                  ) : (
+                    <p className="text-gray-500 text-sm">
+                      Cargando información del local...
+                    </p>
+                  )}
+                </section>
+              )}
+            </div>
           )}
         </main>
       </div>
