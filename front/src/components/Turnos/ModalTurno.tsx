@@ -91,7 +91,7 @@ export const ModalTurno = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md p-6 relative border border-gray-100 animate-in fade-in zoom-in duration-200">
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md p-6 relative border border-gray-100 animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-start mb-5">
           <div>
@@ -114,6 +114,7 @@ export const ModalTurno = ({
         </div>
 
         {/* Info de días y horarios de atención */}
+        <div className="flex-1 overflow-y-auto pr-1 space-y-4">
         <div className="bg-sky-50/80 border border-sky-100 rounded-2xl p-4 shadow-sm">
           <p className="bg-sky-50/80 border border-sky-100 rounded-2xl p-4 shadow-sm">
             <Calendar size={14} className="text-sky-700" /> Días y Horarios de
@@ -248,9 +249,10 @@ export const ModalTurno = ({
               </p>
             ) : null}
           </div>
+          </div>
 
           {/* Botones de Acción */}
-          <div className="flex items-center gap-3 pt-3">
+          <div className="flex items-center gap-3 pt-3 mt-3 border-t border-gray-100 flex-shrink-0">
             <button
               type="button"
               onClick={cerrar}
@@ -276,47 +278,3 @@ export const ModalTurno = ({
     </div>
   );
 };
-
-/*
-
- {/* 1° Elige Servicio }*/
-/*
-      <select onChange={(e) => setServicioSeleccionadoId(e.target.value)}>
-        <option value="">-- Seleccioná un servicio --</option>
-        {servicios.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.name}
-          </option>
-        ))}
-      </select>
-
-      {/* 2° Elige Fecha }*/
-/*
-      <input
-        type="date"
-        value={fechaSeleccionada}
-        onChange={(e) => setFechaSeleccionada(e.target.value)}
-      />
-
-      {/* 3° Lista de Horarios *}/
-      /*{loading && <p>Cargando horarios libres...</p>}
-
-      <div className="horarios-grid">
-        {!loading &&
-          turnosDisponibles.length > 0 &&
-          turnosDisponibles.map((hora) => (
-            <button key={hora} onClick={() => setHoraSeleccionada(hora)}>
-              {hora} hs
-            </button>
-          ))}
-
-        {!loading &&
-          fechaSeleccionada &&
-          servicioSeleccionadoId &&
-          turnosDisponibles.length === 0 && (
-            <p>No hay turnos disponibles para esta fecha.</p>
-          )}
-      </div>
-
-      <button onClick={cerrar}>Cancelar</button>
-    </div>*/
