@@ -19,8 +19,7 @@ namespace GestionDeTurnos.Application.Interface
         Task<bool> IsLocalOwnerAsync(Guid localId, Guid usuarioId);
         Task Delete(Local searchLocal);
         Task<Local> Update(Local local);
-        Task<HorarioAtencion> GetHorarioByLocalId(Guid localId);
+        Task<HorarioAtencion> GetHorarioByLocalId(Guid localId, DayOfWeek dayOfWeek);
         Task<bool> ExistsByNameAsync(string name);
-        //Local GetById(Guid id);
     }
 }

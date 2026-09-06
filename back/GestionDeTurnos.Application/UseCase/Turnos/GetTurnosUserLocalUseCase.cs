@@ -12,8 +12,8 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
     {
         private readonly ILocalRepository _localRepository;
         private readonly ITurnoRespository _turnoRespository;
-        private readonly IUserRepository _userRepository;         // Para saber el nombre del cliente que sacó el turno
-        private readonly IServicioRepository _servicioRepository; // Para saber el nombre del servicio
+        private readonly IUserRepository _userRepository;         
+        private readonly IServicioRepository _servicioRepository; 
 
         public GetTurnosUserLocalUseCase(
             ILocalRepository localRepository,
@@ -33,7 +33,6 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
             var local = await _localRepository.GetLocalById(localId);
             if (local == null) throw new Exception("El local no existe");
 
-            // Traemos todos los turnos que pertenecen a este local
             var turnos = await _turnoRespository.GetTurnosByLocalIdAsync(localId);
 
             if (turnos == null) return new List<TurnoDto>();
@@ -42,8 +41,7 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
 
             foreach (var t in turnos)
             {
-                // Buscamos quién es el cliente que sacó el turno para mostrar su nombre
-                var cliente = await _userRepository.GetUsuarioByIdAsync(t.UsuarioId); // (Asegúrate de que tu entidad Turno tenga el UsuarioId)
+                var cliente = await _userRepository.GetUsuarioByIdAsync(t.UsuarioId); 
                 var servicio = await _servicioRepository.GetServiceById(t.ServicioId);
 
                 turnosDto.Add(new TurnoDto
@@ -61,7 +59,6 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
             return turnosDto;
         }catch (Exception ex)
     {
-        // 🛑 ESTO TE IMPRIMIRÁ EL ERROR EXACTO EN TU TERMINAL DE C#
         Console.WriteLine($"ERROR EN GetTurnosByLocal: {ex.Message} --- StackTrace: {ex.StackTrace}");
         throw;
     }

@@ -35,7 +35,6 @@ namespace GestionDeTurnos.API.Controllers
             return Ok(locales);   
         }
 
-        // para usar en el perfil del local, para mostrar los datos del local y sus horarios
         [HttpGet("{idLocal}")]
         public async Task<IActionResult> GetLocalById(Guid idLocal)
         {

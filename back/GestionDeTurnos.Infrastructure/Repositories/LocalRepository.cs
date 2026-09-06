@@ -48,9 +48,10 @@ namespace GestionDeTurnos.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<HorarioAtencion> GetHorarioByLocalId(Guid localId)
+        public async Task<HorarioAtencion> GetHorarioByLocalId(Guid localId,DayOfWeek dayOfWeek)
         {
-            return await _context.HorariosAtencion.FirstOrDefaultAsync(h => h.LocalId == localId);
+            return await _context.HorariosAtencion
+                .FirstOrDefaultAsync(h => h.LocalId == localId && h.DiaSemana == dayOfWeek);
         }
 
         public async Task<Local?> GetLocalById(Guid localId)

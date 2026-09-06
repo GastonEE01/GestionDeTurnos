@@ -14,7 +14,7 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
     {
         private readonly IUserRepository _userRepository;
         private readonly ITurnoRespository _turnoRespository;
-        private readonly ILocalRepository _localRepository;         // <-- Inyecta el repositorio de locales
+        private readonly ILocalRepository _localRepository;         
         private readonly IServicioRepository _servicioRepository;
 
         public GetTurnosPorUsuarioUseCase(IUserRepository userRepository, ITurnoRespository turnoRespository, ILocalRepository localRepository, IServicioRepository servicioRepository)
@@ -44,9 +44,9 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
                     Id = t.Id,
                     Date = t.Date,
                     LocalId = t.LocalId,
-                    LocalName = local?.Name ?? "Local desconocido",       // <-- Asignamos nombre
+                    LocalName = local?.Name ?? "Local desconocido",     
                     ServicioId = t.ServicioId,
-                    ServicioName = servicio?.Name ?? "Servicio desconocido", // <-- Asignamos nombre
+                    ServicioName = servicio?.Name ?? "Servicio desconocido", 
                     EstaPedido = t.EstaPedido
                 });
             }
@@ -56,18 +56,7 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
                 NameUser = user.Name,
                 Turnos = turnosDto
             };
-            /* return new GetTurnosUsuarioResponse
-             {
-                 UsuarioId = user.Id,
-                 NameUser = user.Name, // si tu entidad Usuario tiene esta propiedad
-                 Turnos = turnos.Select(t => new TurnoDto
-                 {
-                     Id = t.Id,
-                     Date = t.Date,
-                     LocalId = t.LocalId,
-                     ServicioId = t.ServicioId,
-                     EstaPedido = t.EstaPedido
-                 }).ToList() };*/
+            
         
         }
     }

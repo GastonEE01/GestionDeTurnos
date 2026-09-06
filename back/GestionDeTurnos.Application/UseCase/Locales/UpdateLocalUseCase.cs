@@ -12,7 +12,7 @@ namespace GestionDeTurnos.Application.UseCase.Locales
     public class UpdateLocalUseCase
     {
         private readonly ILocalRepository _localRepository;
-        private readonly IHorarioAtencionRepository _horarioRepository; // 👈 Asegúrate de tenerlo inyectado
+        private readonly IHorarioAtencionRepository _horarioRepository; 
 
         public UpdateLocalUseCase(ILocalRepository localRepository, IHorarioAtencionRepository horarioRepository)
         {
@@ -47,14 +47,12 @@ namespace GestionDeTurnos.Application.UseCase.Locales
 
             if (dto.Horarios != null)
             {
-                // 1. Buscamos y borramos los horarios que tenía el local anteriormente
                 var horariosActuales = await _horarioRepository.GetHorarioByLocalId(idLocal);
                 foreach (var hExistente in horariosActuales)
                 {
-                    await _horarioRepository.Delete(hExistente); // O usa el método que tengas para borrar
+                    await _horarioRepository.Delete(hExistente); 
                 }
 
-                // 2. Insertamos los nuevos horarios que mandó el frontend
                 foreach (var hDto in dto.Horarios)
                 {
                     var nuevoHorario = new HorarioAtencion

@@ -35,7 +35,6 @@ namespace GestionDeTurnos.Application.UseCase.Horarios
 
             if(local.UsuarioId != userId) throw new UnauthorizedAccessException("No tenés permisos para modificar este local.");
 
-            // Buscar el local por su ID
             List<HorarioAtencion> searchHorario = await _horarioAtencionRepository.GetHorarioByLocalId(localId);
 
             if(searchHorario == null) throw new KeyNotFoundException("No se encontraron horarios para el local especificado.");

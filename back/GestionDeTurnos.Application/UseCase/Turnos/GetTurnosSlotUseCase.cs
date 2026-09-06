@@ -32,8 +32,9 @@ namespace GestionDeTurnos.Application.UseCase.Turnos
             var searchService = await _servicioRepository.GetServiceById(servicioId);
             if (searchService == null) throw new Exception("Este local no tiene servicios");
 
-            HorarioAtencion horarioLocal = await _localRepository.GetHorarioByLocalId(localId);
-            if (horarioLocal.EstaCerrado) throw new Exception("El local esta cerrado"); 
+            DayOfWeek dayOfWeek = fecha.DayOfWeek;
+            HorarioAtencion horarioLocal = await _localRepository.GetHorarioByLocalId(localId, dayOfWeek);
+            if (horarioLocal == null || horarioLocal.EstaCerrado) throw new Exception("El local esta cerrado"); 
 
             // Obtener la duracion de servicio
             TimeSpan duracionServicio = TimeSpan.FromMinutes(searchService.DurationInMinutes);
